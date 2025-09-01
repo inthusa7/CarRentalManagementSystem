@@ -1,0 +1,77 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model CarRentalManagementSystem.Models.Dashboard
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-people-fill fs-1"></i>
+                <h5 class="card-title mt-2">Total Customers</h5>
+                <h3>@Model.TotalCustomers</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-car-front-fill fs-1"></i>
+                <h5 class="card-title mt-2">Total Cars</h5>
+                <h3>@Model.TotalCars</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle-fill fs-1"></i>
+                <h5 class="card-title mt-2">Available Cars</h5>
+                <h3>@Model.AvailableCars</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-journal-bookmark-fill fs-1"></i>
+                <h5 class="card-title mt-2">Total Bookings</h5>
+                <h3>@Model.TotalBookings</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-3">
+    <div class="col-md-3">
+        <div class="card text-white bg-danger shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-hourglass-split fs-1"></i>
+                <h5 class="card-title mt-2">Active Bookings</h5>
+                <h3>@Model.ActiveBookings</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-dark shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-currency-dollar fs-1"></i>
+                <h5 class="card-title mt-2">Total Revenue</h5>
+                <h3>@Model.TotalRevenue.ToString("C")</h3>
+            </div>
+        </div>
+    </div>
+</div>
