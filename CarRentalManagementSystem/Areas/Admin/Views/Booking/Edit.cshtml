@@ -1,0 +1,22 @@
+@model CarRentalManagementSystem.Models.Booking
+
+@{
+    ViewData["Title"] = "Edit Booking";
+}
+
+<h2>Edit Booking</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="BookingID" />
+
+    <div class="mb-3">
+        <label asp-for="CustomerID" class="form-label">Customer</label>
+        <select asp-for="CustomerID" class="form-select" asp-items="@(new SelectList(ViewBag.Users, "UserID", "Username", Model.CustomerID))">
+            <option value="">-- Select Customer --</option>
+        </select>
+        <span asp-validation-for="CustomerID" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CarID" class="form-label">Car</label>
+        <select asp-for="CarID" class="form-select"

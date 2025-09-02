@@ -2,6 +2,7 @@
 using CarRentalManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http; // for session
 
 namespace CarRentalManagementSystem.Areas.Admin.Controllers
 {
@@ -14,6 +15,10 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             _context = context;
         }
+
+        // ================== Admin Actions ==================
+
+        // GET: Admin/Booking
         public IActionResult Index()
         {
             var bookings = _context.Bookings
@@ -22,6 +27,7 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
                           .ToList();
             return View(bookings);
         }
+
         // GET: Admin/Booking/Create
         public IActionResult Create()
         {
@@ -37,10 +43,18 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var car = _context.Cars.Find(model.CarID);
+                if (car == null || !car.IsAvailable)
+                {
+                    ModelState.AddModelError("CarID", "Selected car is not available.");
+                    ViewBag.Users = _context.Users.ToList();
+                    ViewBag.Cars = _context.Cars.Where(c => c.IsAvailable).ToList();
+                    return View(model);
+                }
+
                 // Calculate total cost
                 var days = (model.ReturnDate - model.PickupDate).Days;
-                days = days == 0 ? 1 : days; // Minimum 1 day
-                var car = _context.Cars.Find(model.CarID);
+                days = days == 0 ? 1 : days;
                 model.TotalCost = days * car.DailyRate;
 
                 // Mark car unavailable
@@ -64,7 +78,10 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
                 return NotFound();
 
             ViewBag.Users = _context.Users.ToList();
-            ViewBag.Cars = _context.Cars.ToList();
+            ViewBag.Cars = _context.Cars
+                            .Where(c => c.IsAvailable || c.CarID == booking.CarID)
+                            .ToList();
+
             return View(booking);
         }
 
@@ -75,9 +92,24 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var oldBooking = _context.Bookings.AsNoTracking().FirstOrDefault(b => b.BookingID == model.BookingID);
+                if (oldBooking == null)
+                    return NotFound();
+
+                // If car changed, update availability
+                if (oldBooking.CarID != model.CarID)
+                {
+                    var oldCar = _context.Cars.Find(oldBooking.CarID);
+                    if (oldCar != null) oldCar.IsAvailable = true;
+
+                    var newCar = _context.Cars.Find(model.CarID);
+                    if (newCar != null) newCar.IsAvailable = false;
+                }
+
+                // Calculate total cost
+                var car = _context.Cars.Find(model.CarID);
                 var days = (model.ReturnDate - model.PickupDate).Days;
                 days = days == 0 ? 1 : days;
-                var car = _context.Cars.Find(model.CarID);
                 model.TotalCost = days * car.DailyRate;
 
                 _context.Bookings.Update(model);
@@ -113,13 +145,15 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             if (booking == null)
                 return NotFound();
 
-            // Mark car available again
+            // Make the car available again
             var car = _context.Cars.Find(booking.CarID);
-            car.IsAvailable = true;
+            if (car != null) car.IsAvailable = true;
 
             _context.Bookings.Remove(booking);
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        
     }
 }
