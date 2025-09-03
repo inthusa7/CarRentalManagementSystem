@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using CarRentalManagementSystem.Data;
 using CarRentalManagementSystem.Models;
 
-namespace CarRentalManagementSystem.Controllers
+namespace CarRentalManagementSystem.Areas.Customer
 {
     public class BookingController : Controller
     {
