@@ -9,7 +9,7 @@ namespace CarRentalManagementSystem.Models
         public int BookingID { get; set; }
 
         [ForeignKey("User")]
-        public int CustomerID { get; set; }
+        public int UserID { get; set; }
         public User User { get; set; }
 
         [ForeignKey("Car")]

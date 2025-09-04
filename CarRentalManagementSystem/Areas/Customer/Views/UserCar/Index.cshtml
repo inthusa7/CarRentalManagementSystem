@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<CarRentalManagementSystem.Models.Car>
+
+@{
+    ViewData["Title"] = "Available Cars";
+}
+
+<h2>Available Cars</h2>
+
+<div class="row">
+    @foreach (var car in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                @if (!string.IsNullOrEmpty(car.ImageUrl))
+                {
+                    <img src="@car.ImageUrl" class="card-img-top" style="height:200px; object-fit:cover;" />
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@car.CarName</h5>
+                    <p class="card-text">Model: @car.CarModel</p>
+                    <p class="card-text">Rate: @car.DailyRate.ToString("C") / day</p>
+                    <a asp-action="Details" asp-route-id="@car.CarID" asp-area="Customer" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
