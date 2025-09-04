@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 namespace CarRentalManagementSystem.Areas.Customer
 {
     [Area("Customer")]
-    public class UserBookingController : Controller
+    public class BookingController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public UserBookingController(ApplicationDbContext context)
+        public BookingController(ApplicationDbContext context)
         {
             _context = context;
         }

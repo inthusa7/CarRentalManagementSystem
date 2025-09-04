@@ -37,7 +37,8 @@ app.MapControllerRoute(
 // 2?? Default route for non-area controllers
 app.MapControllerRoute(
     name: "default",
-    pattern: "{Area=Admin}/{controller=Car}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+   
 
 app.Run();
 

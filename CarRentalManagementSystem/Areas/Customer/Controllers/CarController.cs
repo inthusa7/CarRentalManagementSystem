@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarRentalManagementSystem.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    public class UserCarController : Controller
+    public class CarController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public UserCarController(ApplicationDbContext context)
+        public CarController(ApplicationDbContext context)
         {
             _context = context;
         }
