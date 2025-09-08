@@ -4,7 +4,7 @@ using CarRentalManagementSystem.Data;
 using CarRentalManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarRentalManagementSystem.Areas.Customer
+namespace CarRentalManagementSystem.Areas.Customer.Controllers
 {
     [Area("Customer")]
     public class BookingController : Controller
@@ -16,11 +16,11 @@ namespace CarRentalManagementSystem.Areas.Customer
             _context = context;
         }
 
-        // GET: Customer/UserBooking/BookNow/5
+        // GET: Customer/Booking/BookNow/5
         public IActionResult BookNow(int carId)
         {
-            var userIdString = HttpContext.Session.GetString("UserID");
-            if (string.IsNullOrEmpty(userIdString))
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null)
                 return RedirectToAction("Login", "Account", new { area = "Customer" });
 
             var car = _context.Cars.Find(carId);
@@ -30,7 +30,7 @@ namespace CarRentalManagementSystem.Areas.Customer
             var booking = new Booking
             {
                 CarID = carId,
-                UserID = int.Parse(userIdString),
+                UserID = userId.Value,
                 PickupDate = DateTime.Now,
                 ReturnDate = DateTime.Now.AddDays(1)
             };
@@ -39,16 +39,16 @@ namespace CarRentalManagementSystem.Areas.Customer
             return View(booking);
         }
 
-        // POST: Customer/UserBooking/BookNow
+        // POST: Customer/Booking/BookNow
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult BookNow(Booking model)
         {
-            var userIdString = HttpContext.Session.GetString("UserID");
-            if (string.IsNullOrEmpty(userIdString))
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null)
                 return RedirectToAction("Login", "Account", new { area = "Customer" });
 
-            model.UserID = int.Parse(userIdString);
+            model.UserID = userId.Value;
 
             if (ModelState.IsValid)
             {
@@ -61,7 +61,7 @@ namespace CarRentalManagementSystem.Areas.Customer
                 }
 
                 var days = (model.ReturnDate - model.PickupDate).Days;
-                days = days == 0 ? 1 : days;
+                days = days <= 0 ? 1 : days;
                 model.TotalCost = days * car.DailyRate;
 
                 car.IsAvailable = false;
@@ -69,52 +69,50 @@ namespace CarRentalManagementSystem.Areas.Customer
                 _context.Bookings.Add(model);
                 _context.SaveChanges();
 
-                return RedirectToAction("History", "UserBooking", new { area = "Customer" });
+                return RedirectToAction("History", "Booking", new { area = "Customer" });
             }
 
             ViewBag.Car = _context.Cars.Find(model.CarID);
             return View(model);
         }
 
-        // GET: Customer/UserBooking/History
+        // GET: Customer/Booking/History
         public IActionResult History()
         {
-            var userIdString = HttpContext.Session.GetString("UserID");
-            if (string.IsNullOrEmpty(userIdString))
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null)
                 return RedirectToAction("Login", "Account", new { area = "Customer" });
-
-            int userId = int.Parse(userIdString);
 
             var bookings = _context.Bookings
                                    .Include(b => b.Car)
-                                   .Where(b => b.UserID == userId)
+                                   .Where(b => b.UserID == userId.Value)
                                    .OrderByDescending(b => b.PickupDate)
                                    .ToList();
 
             return View(bookings);
         }
 
-        // POST: Customer/UserBooking/Cancel
+        // POST: Customer/Booking/Cancel
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Cancel(int id)
         {
-            var userIdString = HttpContext.Session.GetString("UserID");
-            if (string.IsNullOrEmpty(userIdString))
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null)
                 return RedirectToAction("Login", "Account", new { area = "Customer" });
-
-            int userId = int.Parse(userIdString);
 
             var booking = _context.Bookings
                                   .Include(b => b.Car)
-                                  .FirstOrDefault(b => b.BookingID == id && b.UserID == userId);
+                                  .FirstOrDefault(b => b.BookingID == id && b.UserID == userId.Value);
 
             if (booking == null)
                 return NotFound();
 
             if (booking.PickupDate > DateTime.Now)
             {
-                booking.Car.IsAvailable = true;
+                if (booking.Car != null)
+                    booking.Car.IsAvailable = true;
+
                 _context.Bookings.Remove(booking);
                 _context.SaveChanges();
             }
@@ -123,5 +121,3 @@ namespace CarRentalManagementSystem.Areas.Customer
         }
     }
 }
-
-

@@ -1,12 +1,12 @@
-﻿@{
-    ViewData["Title"] = "Login";
+@{
+    ViewData["Title"] = "Sign In";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="login-box mt-5">
-    <h2 class="text-center">Login</h2>
+    <h2 class="text-center">Sign In</h2>
 
-    <form asp-action="Login" method="post">
+    <form asp-action="SignIn" method="post">
         <div class="mb-3">
             <label class="form-label">Username :</label>
             <input type="text" name="username" class="form-control" required />
@@ -16,10 +16,10 @@
             <input type="password" name="password" class="form-control" required />
         </div>
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="submit" class="btn btn-success">Sign In</button>
         </div>
         <div class="d-grid mt-2">
-            <a asp-area="Customer" asp-controller="Account" asp-action="SignIn" class="btn btn-success">Sign In</a>
+            <a asp-area="Customer" asp-controller="Account" asp-action="Login" class="btn btn-primary">Login</a>
         </div>
 
         @if (ViewBag.Error != null)

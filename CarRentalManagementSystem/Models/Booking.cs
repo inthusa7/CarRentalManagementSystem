@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarRentalManagementSystem.Models
 {
-    public class Booking
+    public class Booking : IValidatableObject
     {
         [Key]
         public int BookingID { get; set; }
@@ -11,22 +11,16 @@ namespace CarRentalManagementSystem.Models
         [Required]
         [ForeignKey("User")]
         public int UserID { get; set; }
-        public User User { get; set; }
-
-
+        public User? User { get; set; }
 
         [Required]
         [ForeignKey("Car")]
         public int CarID { get; set; }
-        public Car Car { get; set; }
-
-
+        public Car? Car { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
         public DateTime PickupDate { get; set; }
-
-
 
         [Required]
         [DataType(DataType.Date)]
@@ -35,13 +29,12 @@ namespace CarRentalManagementSystem.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal TotalCost { get; set; }
 
-
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (ReturnDate < PickupDate)
             {
                 yield return new ValidationResult(
-                    "Return date cannot be earlier than Pickup date",
+                    "Return date  cannot be earlier than Pickup date",
                     new[] { nameof(ReturnDate) });
             }
         }

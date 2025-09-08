@@ -1,5 +1,6 @@
 ﻿using CarRentalManagementSystem.Data;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace CarRentalManagementSystem.Areas.Customer.Controllers
 {
@@ -12,13 +13,16 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         {
             _context = context;
         }
+
+        // GET: Customer/Car
         public IActionResult Index()
         {
             var cars = _context.Cars
                        .Where(c => c.IsAvailable)
                        .ToList();
-            return View();
+            return View(cars); // ✅ pass cars to view
         }
+
         // GET: Customer/Car/Details/5
         public IActionResult Details(int id)
         {
@@ -27,10 +31,5 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
 
             return View(car);
         }
-
     }
-
 }
-
-
-       

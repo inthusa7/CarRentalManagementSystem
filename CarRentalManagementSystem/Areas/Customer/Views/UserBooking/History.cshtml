@@ -1,10 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
-@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+﻿@model IEnumerable<CarRentalManagementSystem.Models.Booking>
 
 @{
     ViewData["Title"] = "My Booking History";
@@ -38,8 +32,8 @@ else
 
                 <tr>
                     <td>
-                        <strong>@booking.Car.CarName</strong> (@booking.Car.CarModel)<br />
-                        @if (!string.IsNullOrEmpty(booking.Car.ImageUrl))
+                        <strong>@booking.Car?.CarName</strong> (@booking.Car?.CarModel)<br />
+                        @if (!string.IsNullOrEmpty(booking.Car?.ImageUrl))
                         {
                             <img src="@booking.Car.ImageUrl" alt="@booking.Car.CarName" style="width:100px;" class="mt-2" />
                         }
@@ -78,4 +72,3 @@ else
         </tbody>
     </table>
 }
-
