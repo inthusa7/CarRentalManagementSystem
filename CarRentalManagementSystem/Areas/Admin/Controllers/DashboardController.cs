@@ -23,7 +23,11 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             // Dashboard data
             ViewBag.TotalCustomers = _context.Users.Count(u => u.Role == "Customer");
             ViewBag.TotalCars = _context.Cars.Count();
+            ViewBag.AvailableCars = _context.Cars.Count(c => c.IsAvailable);
+            ViewBag.RentedCars = _context.Cars.Count(c => !c.IsAvailable);
             ViewBag.TotalBookings = _context.Bookings.Count();
+            ViewBag.TotalRevenue = _context.Bookings.Sum(b => b.TotalCost);
+
 
             var recentBookings = _context.Bookings
                                          .Include(b => b.User)

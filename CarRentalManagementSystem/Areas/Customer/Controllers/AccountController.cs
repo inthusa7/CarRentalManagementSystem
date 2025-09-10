@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CarRentalManagementSystem.Data; // Adjust namespace
-using System.Linq;
+﻿using CarRentalManagementSystem.Data; // Adjust namespace
+using CarRentalManagementSystem.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace CarRentalManagementSystem.Areas.Customer.Controllers
 {
@@ -35,40 +36,35 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             {
                 HttpContext.Session.SetString("Username", customer.Username);
                 HttpContext.Session.SetInt32("UserID", customer.UserID);
-                return RedirectToAction("Index", "Car");
+                return RedirectToAction("Index", "Cars"); // Navigate to car listing
             }
 
             ViewBag.Error = "Invalid username or password";
-            ViewData["Title"] = "Login";
             return View();
         }
 
         // =====================
-        // Customer Sign In
+        // Customer Registration
         // =====================
-        public IActionResult SignIn()
+        public IActionResult Register()
         {
-            ViewData["Title"] = "Sign In";
+            ViewData["Title"] = "Register";
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SignIn(string username, string password)
+        public IActionResult Register(User model)
         {
-            var customer = _context.Users
-                .FirstOrDefault(u => u.Username == username && u.Password == password && u.Role == "Customer");
-
-            if (customer != null)
+            if (ModelState.IsValid)
             {
-                HttpContext.Session.SetString("Username", customer.Username);
-                HttpContext.Session.SetInt32("UserID", customer.UserID);
-                return RedirectToAction("Index", "Car");
+                model.Role = "Customer"; // Set role
+                _context.Users.Add(model);
+                _context.SaveChanges();
+                TempData["Success"] = "Registration Successful! You can now login.";
+                return RedirectToAction("Login");
             }
-
-            ViewBag.Error = "Invalid username or password";
-            ViewData["Title"] = "Sign In";
-            return View();
+            return View(model);
         }
 
         public IActionResult Logout()
