@@ -120,6 +120,8 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             _context.Bookings.Remove(booking);
             _context.SaveChanges();
             return RedirectToAction("Index");
+            //summa check
         }
+        //ghfnhtdsgs
     }
 }
