@@ -1,39 +1,42 @@
-﻿@model IEnumerable<CarRentalManagementSystem.Models.Car>
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<CarRentalManagementSystem.Models.User>
 
 @{
-    ViewData["Title"] = "Available Cars";
+    ViewData["Title"] = "User List";
 }
 
-<div class="container mt-4">
-    <h2 class="text-center mb-4">Available Cars</h2>
+<h2>User List</h2>
 
-    <div class="row">
-        @foreach (var car in Model)
+<p>
+    <a asp-action="Create" asp-area="Admin" class="btn btn-primary">Add New User</a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    @if (!string.IsNullOrEmpty(car.ImageUrl))
-                    {
-                        <img src="@car.ImageUrl" class="card-img-top" style="height:200px; object-fit:cover;" />
-                    }
-                    else
-                    {
-                        <img src="/images/cars/default.jpg" class="card-img-top" style="height:200px; object-fit:cover;" />
-                    }
-                    <div class="card-body text-center">
-                        <h5 class="card-title">@car.CarName</h5>
-                        <p class="card-text">Model: @car.CarModel</p>
-                        <p class="card-text">Rate: @car.DailyRate.ToString("C") / day</p>
-
-                        <a asp-area="Customer" asp-controller="Car" asp-action="Details" asp-route-id="@car.CarID" class="btn btn-primary">
-                            View Details
-                        </a>
-                        <a asp-area="Customer" asp-controller="Account" asp-action="Login" class="btn btn-success">
-                            Book Now
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <tr>
+                <td>@user.UserID</td>
+                <td>@user.Username</td>
+                <td>@user.Role</td>
+                <td>
+                    <a asp-action="Edit" asp-area="Admin" asp-route-id="@user.UserID" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-area="Admin" asp-route-id="@user.UserID" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
         }
-    </div>
-</div>
+    </tbody>
+</table>
+

@@ -1,56 +1,56 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+﻿@model IEnumerable<CarRentalManagementSystem.Models.Booking>
 
 @{
-    ViewData["Title"] = "Customer Dashboard";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<h2>Welcome, @Context.Session.GetString("Username")</h2>
+<h2>Welcome, @Context.Session.GetString("AdminUsername")</h2>
 
-<p>
-    <a asp-area="Customer" asp-controller="Car" asp-action="Index" class="btn btn-primary">Browse Cars</a>
-</p>
-
-<h4>My Bookings</h4>
-
-@if (!Model.Any())
-{
-    <div class="alert alert-info">
-        You have no bookings yet.
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary p-3">
+            <h5>Total Customers</h5>
+            <h3>@ViewBag.TotalCustomers</h3>
+        </div>
     </div>
-}
-else
-{
-    <table class="table table-bordered table-striped">
-        <thead>
+    <div class="col-md-4">
+        <div class="card text-white bg-success p-3">
+            <h5>Total Cars</h5>
+            <h3>@ViewBag.TotalCars</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning p-3">
+            <h5>Total Bookings</h5>
+            <h3>@ViewBag.TotalBookings</h3>
+        </div>
+    </div>
+</div>
+
+<h4>Recent Bookings</h4>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>BookingID</th>
+            <th>CustomerID</th>   @* Show only ID since User removed *@
+            <th>Car</th>
+            <th>Pickup Date</th>
+            <th>Return Date</th>
+            <th>Total Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
             <tr>
-                <th>Car</th>
-                <th>Pickup Date</th>
-                <th>Return Date</th>
-                <th>Total Cost</th>
-                <th>Status</th>
+                <td>@booking.BookingID</td>
+                <td>@booking.CustomerID</td>
+                <td>@booking.Car?.CarName</td>
+                <td>@booking.PickupDate.ToString("dd MMM yyyy")</td>
+                <td>@booking.ReturnDate.ToString("dd MMM yyyy")</td>
+                <td>@booking.TotalCost.ToString("C")</td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var booking in Model)
-            {
-                var status = booking.ReturnDate < DateTime.Now ? "Completed" :
-                booking.PickupDate > DateTime.Now ? "Upcoming" : "Active";
-
-                <tr>
-                    <td>@booking.Car.CarName (@booking.Car.CarModel)</td>
-                    <td>@booking.PickupDate.ToString("dd MMM yyyy")</td>
-                    <td>@booking.ReturnDate.ToString("dd MMM yyyy")</td>
-                    <td>@booking.TotalCost.ToString("C")</td>
-                    <td>@status</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-
+        }
+    </tbody>
+</table>

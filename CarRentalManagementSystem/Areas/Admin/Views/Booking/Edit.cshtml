@@ -10,11 +10,11 @@
     <input type="hidden" asp-for="BookingID" />
 
     <div class="mb-3">
-        <label asp-for="UserID" class="form-label">Customer</label>
-        <select asp-for="UserID" class="form-select" asp-items="@(new SelectList(ViewBag.Users, "UserID", "Username", Model.UserID))">
+        <label asp-for="CustomerID" class="form-label">Customer</label>
+        <select asp-for="CustomerID" class="form-select" asp-items="@(new SelectList(ViewBag.Customers, "CustomerID", "Username", Model.CustomerID))">
             <option value="">-- Select Customer --</option>
         </select>
-        <span asp-validation-for="UserID" class="text-danger"></span>
+        <span asp-validation-for="CustomerID" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
@@ -40,8 +40,3 @@
     <button type="submit" class="btn btn-primary">Save Changes</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
-
-
-
-        
-

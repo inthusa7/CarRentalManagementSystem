@@ -19,9 +19,9 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         // GET: Customer/Booking/BookNow/5
         public IActionResult BookNow(int carId)
         {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
-                return RedirectToAction("Login", "Account", new { area = "Customer" });
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
 
             var car = _context.Cars.Find(carId);
             if (car == null || !car.IsAvailable)
@@ -30,9 +30,9 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             var booking = new Booking
             {
                 CarID = carId,
-                UserID = userId.Value,
+                CustomerID = customerId.Value,
                 PickupDate = DateTime.Now,
-                ReturnDate = DateTime.Now.AddDays(1)
+                ReturnDate = DateTime.Now.AddDays(1) // default 1 day
             };
 
             ViewBag.Car = car;
@@ -44,11 +44,11 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult BookNow(Booking model)
         {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
-                return RedirectToAction("Login", "Account", new { area = "Customer" });
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
 
-            model.UserID = userId.Value;
+            model.CustomerID = customerId.Value;
 
             if (ModelState.IsValid)
             {
@@ -60,8 +60,9 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
                     return View(model);
                 }
 
+                // Cost calculation = days * rate
                 var days = (model.ReturnDate - model.PickupDate).Days;
-                days = days <= 0 ? 1 : days;
+                if (days <= 0) days = 1;
                 model.TotalCost = days * car.DailyRate;
 
                 car.IsAvailable = false;
@@ -79,13 +80,13 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         // GET: Customer/Booking/History
         public IActionResult History()
         {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
-                return RedirectToAction("Login", "Account", new { area = "Customer" });
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
 
             var bookings = _context.Bookings
                                    .Include(b => b.Car)
-                                   .Where(b => b.UserID == userId.Value)
+                                   .Where(b => b.CustomerID == customerId.Value)
                                    .OrderByDescending(b => b.PickupDate)
                                    .ToList();
 
@@ -97,25 +98,22 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Cancel(int id)
         {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
-                return RedirectToAction("Login", "Account", new { area = "Customer" });
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
 
             var booking = _context.Bookings
                                   .Include(b => b.Car)
-                                  .FirstOrDefault(b => b.BookingID == id && b.UserID == userId.Value);
+                                  .FirstOrDefault(b => b.BookingID == id && b.CustomerID == customerId.Value);
 
             if (booking == null)
                 return NotFound();
 
-            if (booking.PickupDate > DateTime.Now)
-            {
-                if (booking.Car != null)
-                    booking.Car.IsAvailable = true;
+            if (booking.Car != null)
+                booking.Car.IsAvailable = true;
 
-                _context.Bookings.Remove(booking);
-                _context.SaveChanges();
-            }
+            _context.Bookings.Remove(booking);
+            _context.SaveChanges();
 
             return RedirectToAction("History");
         }

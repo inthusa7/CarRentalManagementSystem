@@ -14,6 +14,7 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             _context = context;
         }
+
         public IActionResult Index()
         {
             var bookings = _context.Bookings
@@ -22,6 +23,7 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
                           .ToList();
             return View(bookings);
         }
+
         // GET: Admin/Booking/Create
         public IActionResult Create()
         {
@@ -37,13 +39,8 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Calculate total cost
-                var days = (model.ReturnDate - model.PickupDate).Days;
-                days = days == 0 ? 1 : days; // Minimum 1 day
                 var car = _context.Cars.Find(model.CarID);
-                model.TotalCost = days * car.DailyRate;
-
-                // Mark car unavailable
+                model.TotalCost = car.DailyRate;
                 car.IsAvailable = false;
 
                 _context.Bookings.Add(model);
@@ -75,10 +72,8 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var days = (model.ReturnDate - model.PickupDate).Days;
-                days = days == 0 ? 1 : days;
                 var car = _context.Cars.Find(model.CarID);
-                model.TotalCost = days * car.DailyRate;
+                model.TotalCost = car.DailyRate;
 
                 _context.Bookings.Update(model);
                 _context.SaveChanges();
@@ -113,7 +108,6 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             if (booking == null)
                 return NotFound();
 
-            // Mark car available again
             var car = _context.Cars.Find(booking.CarID);
             car.IsAvailable = true;
 
