@@ -8,10 +8,10 @@ namespace CarRentalManagementSystem.Models
         public int UserID { get; set; }
 
         [Required, MaxLength(50)]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         [Required, MaxLength(50)]
-        public string Password { get; set; } // plain text as per assignment
+        public string Password { get; set; } = string.Empty; // plain text as per assignment
 
         [Required, MaxLength(20)]
         public string Role { get; set; } // "Admin" or "Customer"
