@@ -19,7 +19,7 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             var cars = _context.Cars.ToList();
             return View(cars);
-            
+
         }
         // GET: Admin/Car/Create
         public IActionResult Create()

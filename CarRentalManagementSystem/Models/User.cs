@@ -15,5 +15,9 @@ namespace CarRentalManagementSystem.Models
 
         [Required, MaxLength(20)]
         public string Role { get; set; } // "Admin" or "Customer"
+
+        [Required, MaxLength(100)]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;   // ✅ புதிய property
     }
 }
