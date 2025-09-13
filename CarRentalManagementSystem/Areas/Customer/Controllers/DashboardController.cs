@@ -23,7 +23,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
 
             var myBookings = _context.Bookings
                                      .Include(b => b.Car)
-                                     .Where(b => b.CustomerID == customerId)
+                                     .Where(b => b.UserID == customerId)
                                      .OrderByDescending(b => b.PickupDate) // ✅ Fix: BookingDate → PickupDate
                                      .ToList();
 

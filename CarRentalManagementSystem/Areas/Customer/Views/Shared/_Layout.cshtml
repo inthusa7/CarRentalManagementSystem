@@ -5,39 +5,47 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Admin - Car Rental System</title>
+    <title>Customer - Car Rental System</title>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-
     <style>
-        /* Navbar link styles */
         .navbar-nav .nav-link {
-            font-weight: 600; /* semi-bold */
+            font-weight: 500; /* semi-bold */
         }
-        .navbar-nav .nav-link.active {
-            font-weight: 700; /* bolder for active */
-        }
+
+            .navbar-nav .nav-link.active {
+                font-weight: 700; /* bold */
+                color: #fff !important;
+                background-color: #0d6efd; /* blue for active link */
+                border-radius: 5px;
+                padding: 5px 10px;
+            }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <!-- ================= Navbar ================= -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0d6efd;">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-                Admin Panel
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <a class="navbar-brand" asp-area="Customer" asp-controller="Dashboard" asp-action="Index">Car Rental</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCustomer"
+                    aria-controls="navbarCustomer" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarAdmin">
+            <div class="collapse navbar-collapse" id="navbarCustomer">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="Admin" asp-controller="Car" asp-action="Index">Manage Cars</a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" &&
+                                                                       ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Booking" asp-action="Index">Book a Car</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="Admin" asp-controller="Booking" asp-action="Index">Manage Bookings</a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" &&
+                                                                       ViewContext.RouteData.Values["action"]?.ToString() == "MyBookings" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="Admin" asp-controller="User" asp-action="Index">Customers</a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Profile" asp-action="Index">Profile</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -51,6 +59,7 @@
         </div>
     </nav>
 
+    <!-- ================= Body ================= -->
     <div class="container mt-3">
         @RenderBody()
     </div>

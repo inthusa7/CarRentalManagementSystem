@@ -10,7 +10,7 @@ namespace CarRentalManagementSystem.Models
 
         [Required]
         [ForeignKey("User")]
-        public int CustomerID { get; set; }   // UserID → CustomerID
+        public int UserID { get; set; }   // UserID → CustomerID
 
         [Required]
         [ForeignKey("Car")]
@@ -28,5 +28,8 @@ namespace CarRentalManagementSystem.Models
 
         public User User { get; set; }
         public Car Car { get; set; }
+
+
+
     }
 }
