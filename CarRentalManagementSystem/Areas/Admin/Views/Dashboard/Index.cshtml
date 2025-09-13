@@ -1,39 +1,55 @@
 ﻿@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<h2>Welcome, @Context.Session.GetString("AdminUsername")</h2>
+<h2 class="mb-4">Welcome, @HttpContextAccessor.HttpContext.Session.GetString("Username")</h2>
 
-<div class="row mb-4">
+<!-- ================= Dashboard Buttons ================= -->
+<div class="mb-4 text-center">
+    <a class="btn btn-outline-primary btn-lg m-2"
+       asp-area="Admin" asp-controller="Car" asp-action="Index">Manage Cars</a>
+
+    <a class="btn btn-outline-success btn-lg m-2"
+       asp-area="Admin" asp-controller="Booking" asp-action="Index">Manage Bookings</a>
+
+    <a class="btn btn-outline-warning btn-lg m-2"
+       asp-area="Admin" asp-controller="User" asp-action="Index">Manage Users</a>
+</div>
+
+<!-- ================= Stats Cards ================= -->
+<div class="row mb-4 text-center">
     <div class="col-md-4">
-        <div class="card text-white bg-primary p-3">
+        <div class="card text-white bg-primary p-3 shadow-sm">
             <h5>Total Customers</h5>
-            <h3>@ViewBag.TotalCustomers</h3>
+            <h3>@(ViewBag.TotalCustomers ?? 0)</h3>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-success p-3">
+        <div class="card text-white bg-success p-3 shadow-sm">
             <h5>Total Cars</h5>
-            <h3>@ViewBag.TotalCars</h3>
+            <h3>@(ViewBag.TotalCars ?? 0)</h3>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-warning p-3">
+        <div class="card text-white bg-warning p-3 shadow-sm">
             <h5>Total Bookings</h5>
-            <h3>@ViewBag.TotalBookings</h3>
+            <h3>@(ViewBag.TotalBookings ?? 0)</h3>
         </div>
     </div>
 </div>
 
+<!-- ================= Recent Bookings Table ================= -->
 <h4>Recent Bookings</h4>
 
 <table class="table table-bordered table-striped">
-    <thead>
+    <thead class="table-dark">
         <tr>
-            <th>BookingID</th>
-            <th>CustomerID</th>   @* Show only ID since User removed *@
+            <th>Booking ID</th>
+            <th>Customer</th>
             <th>Car</th>
             <th>Pickup Date</th>
             <th>Return Date</th>
@@ -41,15 +57,33 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var booking in Model)
+        @if (Model != null && Model.Any())
+        {
+            foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.BookingID</td>
+                    <td>@booking.User?.Username ?? "N/A"</td>
+                    <td>
+                        @if (booking.Car != null)
+                        {
+                            @($"{booking.Car.CarName} ({booking.Car.CarModel})")
+                        }
+                        else
+                        {
+                            @("N/A")
+                        }
+                    </td>
+                    <td>@booking.PickupDate.ToString("dd MMM yyyy")</td>
+                    <td>@booking.ReturnDate.ToString("dd MMM yyyy")</td>
+                    <td>@booking.TotalCost.ToString("C")</td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@booking.BookingID</td>
-                <td>@booking.CustomerID</td>
-                <td>@booking.Car?.CarName</td>
-                <td>@booking.PickupDate.ToString("dd MMM yyyy")</td>
-                <td>@booking.ReturnDate.ToString("dd MMM yyyy")</td>
-                <td>@booking.TotalCost.ToString("C")</td>
+                <td colspan="6" class="text-center">No bookings found.</td>
             </tr>
         }
     </tbody>

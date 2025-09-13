@@ -1,45 +1,27 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
-@model CarRentalManagementSystem.Models.Car
-
-@{
-    ViewData["Title"] = "Add New Car";
-}
+﻿@model CarRentalManagementSystem.Models.Car
 
 <h2>Add New Car</h2>
 
-<form asp-action="Create" asp-area="Admin" method="post">
-    <div class="form-group">
+<form asp-action="Create" method="post">
+    <div>
         <label asp-for="CarName"></label>
-        <input asp-for="CarName" class="form-control" />
-        <span asp-validation-for="CarName" class="text-danger"></span>
+        <input asp-for="CarName" class="form-control"/>
     </div>
-    <div class="form-group">
+    <div>
         <label asp-for="CarModel"></label>
-        <input asp-for="CarModel" class="form-control" />
-        <span asp-validation-for="CarModel" class="text-danger"></span>
+        <input asp-for="CarModel" class="form-control"/>
     </div>
-    <div class="form-group">
-        <label asp-for="DailyRate"></label>
-        <input asp-for="DailyRate" class="form-control" />
-        <span asp-validation-for="DailyRate" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="IsAvailable"></label>
-        <input asp-for="IsAvailable" type="checkbox" class="form-check-input" />
-    </div>
-    <div class="form-group">
+    <div>
         <label asp-for="ImageUrl"></label>
-        <input asp-for="ImageUrl" class="form-control" />
+        <input asp-for="ImageUrl" class="form-control"/>
+    </div>
+    <div>
+        <label asp-for="DailyRate"></label>
+        <input asp-for="DailyRate" class="form-control"/>
+    </div>
+    <div>
+        <label asp-for="IsAvailable"></label>
+        <input asp-for="IsAvailable" type="checkbox" />
     </div>
     <button type="submit" class="btn btn-success">Save</button>
-    <a asp-action="Index" asp-area="Admin" class="btn btn-secondary">Cancel</a>
 </form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

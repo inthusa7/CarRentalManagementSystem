@@ -13,25 +13,32 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             _context = context;
         }
+
+        // ----- CRUD Users (Admin Only) -----
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("Role") != "Admin")
+                return RedirectToAction("Login", "Account", new { area = "" });
+
             var users = _context.Users.ToList();
             return View(users);
         }
 
-        // GET: Admin/User/Create
         public IActionResult Create()
         {
+            if (HttpContext.Session.GetString("Role") != "Admin")
+                return RedirectToAction("Login", "Account", new { area = "" });
+
             return View();
         }
 
-        // POST: Admin/User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(User model)
         {
             if (ModelState.IsValid)
             {
+                model.Role = "Customer"; // Only customers
                 _context.Users.Add(model);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -39,17 +46,16 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             return View(model);
         }
 
-        // GET: Admin/User/Edit/5
         public IActionResult Edit(int id)
         {
-            var user = _context.Users.Find(id);
-            if (user == null)
-                return NotFound();
+            if (HttpContext.Session.GetString("Role") != "Admin")
+                return RedirectToAction("Login", "Account", new { area = "" });
 
+            var user = _context.Users.Find(id);
+            if (user == null) return NotFound();
             return View(user);
         }
 
-        // POST: Admin/User/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(User model)
@@ -63,24 +69,22 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             return View(model);
         }
 
-        // GET: Admin/User/Delete/5
         public IActionResult Delete(int id)
         {
-            var user = _context.Users.Find(id);
-            if (user == null)
-                return NotFound();
+            if (HttpContext.Session.GetString("Role") != "Admin")
+                return RedirectToAction("Login", "Account", new { area = "" });
 
+            var user = _context.Users.Find(id);
+            if (user == null) return NotFound();
             return View(user);
         }
 
-        // POST: Admin/User/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
             var user = _context.Users.Find(id);
-            if (user == null)
-                return NotFound();
+            if (user == null) return NotFound();
 
             _context.Users.Remove(user);
             _context.SaveChanges();

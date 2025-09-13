@@ -47,12 +47,31 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Cars" asp-action="Index">Cars</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Booking" asp-action="Index">Booking</a>
-                    </li>
+
+                    @* Show Customer links only if logged in and role = Customer *@
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "Customer")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Cars" asp-action="Index">Cars</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Booking" asp-action="Index">My Bookings</a>
+                        </li>
+                    }
+
+                    @* Admin links *@
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "Admin")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Cars" asp-action="Index">Manage Cars</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Booking" asp-action="Index">Manage Bookings</a>
+                        </li>
+                    }
                 </ul>
                 <ul class="navbar-nav">
                     @if (HttpContextAccessor.HttpContext.Session.GetString("Username") == null)
@@ -67,6 +86,9 @@
                     else
                     {
                         <li class="nav-item">
+                            <span class="nav-link">Hello, @HttpContextAccessor.HttpContext.Session.GetString("Username")</span>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
                         </li>
                     }
@@ -74,9 +96,14 @@
             </div>
         </div>
     </nav>
+
     <div class="container mt-4">
         @RenderBody()
     </div>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @* Render Scripts section safely to avoid 'section not rendered' errors *@
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

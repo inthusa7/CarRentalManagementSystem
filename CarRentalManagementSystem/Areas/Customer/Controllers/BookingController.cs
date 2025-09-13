@@ -32,7 +32,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
                 CarID = carId,
                 CustomerID = customerId.Value,
                 PickupDate = DateTime.Now,
-                ReturnDate = DateTime.Now.AddDays(1) // default 1 day
+                ReturnDate = DateTime.Now.AddDays(1)
             };
 
             ViewBag.Car = car;
@@ -60,7 +60,6 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
                     return View(model);
                 }
 
-                // Cost calculation = days * rate
                 var days = (model.ReturnDate - model.PickupDate).Days;
                 if (days <= 0) days = 1;
                 model.TotalCost = days * car.DailyRate;
@@ -70,7 +69,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
                 _context.Bookings.Add(model);
                 _context.SaveChanges();
 
-                return RedirectToAction("History", "Booking", new { area = "Customer" });
+                return RedirectToAction("History");
             }
 
             ViewBag.Car = _context.Cars.Find(model.CarID);

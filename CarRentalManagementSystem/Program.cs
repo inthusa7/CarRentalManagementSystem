@@ -36,32 +36,12 @@ app.UseRouting();
 app.UseSession(); // Session enabled
 app.UseAuthorization();
 
+// ================= Routing =================
+
 // Areas (Admin, Customer)
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
-
-// 🔹 Shortcuts for Customer Area
-app.MapControllerRoute(
-    name: "cars_shortcut",
-    pattern: "Cars/{action=Index}/{id?}",
-    defaults: new { area = "Customer", controller = "Cars" });
-
-app.MapControllerRoute(
-    name: "booking_shortcut",
-    pattern: "Booking/{action=Index}/{id?}",
-    defaults: new { area = "Customer", controller = "Booking" });
-
-app.MapControllerRoute(
-    name: "dashboard_shortcut",
-    pattern: "Dashboard/{action=Index}/{id?}",
-    defaults: new { area = "Customer", controller = "Dashboard" });
-
-// 🔹 Shortcut for Admin Area
-app.MapControllerRoute(
-    name: "admin_shortcut",
-    pattern: "Admin/{action=Index}/{id?}",
-    defaults: new { area = "Admin", controller = "Dashboard" });
 
 // Default
 app.MapControllerRoute(

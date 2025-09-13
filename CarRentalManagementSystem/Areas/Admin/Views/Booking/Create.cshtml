@@ -1,10 +1,8 @@
 @model CarRentalManagementSystem.Models.Car
 
-<h2>Edit Car</h2>
+<h2>Add New Car</h2>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="CarID" />
-
+<form asp-action="Create" method="post">
     <div class="form-group">
         <label>Car Name</label>
         <input asp-for="CarName" class="form-control" />
@@ -30,6 +28,6 @@
         <label class="form-check-label">Available</label>
     </div>
 
-    <button type="submit" class="btn btn-success">Update</button>
+    <button type="submit" class="btn btn-success">Save</button>
     <a href="/Admin/Car" class="btn btn-secondary">Cancel</a>
 </form>
