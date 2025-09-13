@@ -1,0 +1,33 @@
+@model CarRentalManagementSystem.Models.Car
+
+<h2>Add New Car</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label>Car Name</label>
+        <input asp-for="CarName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Car Model</label>
+        <input asp-for="CarModel" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Daily Rate</label>
+        <input asp-for="DailyRate" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Image URL</label>
+        <input asp-for="ImageUrl" class="form-control" />
+    </div>
+
+    <div class="form-check">
+        <input asp-for="IsAvailable" class="form-check-input" />
+        <label class="form-check-label">Available</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="/Admin/Car" class="btn btn-secondary">Cancel</a>
+</form>
