@@ -13,20 +13,20 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         {
             _context = context;
         }
+
         public IActionResult Index()
         {
-            // Session check: if customer not logged in, redirect to login
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
                 return RedirectToAction("Login", "Account");
 
-            int userId = HttpContext.Session.GetInt32("UserID").GetValueOrDefault();
+            int customerId = HttpContext.Session.GetInt32("CustomerID").GetValueOrDefault();
 
-            // Show customer's own bookings
             var myBookings = _context.Bookings
                                      .Include(b => b.Car)
-                                     .Where(b => b.UserID == userId)
-                                     .OrderByDescending(b => b.PickupDate)
+                                     .Where(b => b.UserID == customerId)
+                                     .OrderByDescending(b => b.PickupDate) // ✅ Fix: BookingDate → PickupDate
                                      .ToList();
+
             return View(myBookings);
         }
     }

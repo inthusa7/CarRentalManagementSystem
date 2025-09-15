@@ -1,56 +1,86 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+﻿@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Customer Dashboard";
 }
 
-<h2>Welcome, @Context.Session.GetString("Username")</h2>
+<h2 class="mb-4">Welcome, @HttpContextAccessor.HttpContext.Session.GetString("Username")</h2>
 
-<p>
-    <a asp-area="Customer" asp-controller="Car" asp-action="Index" class="btn btn-primary">Browse Cars</a>
-</p>
+<!-- ================= Dashboard Buttons ================= -->
+<div class="mb-4 text-center">
+    <a class="btn btn-outline-primary btn-lg m-2"
+       asp-area="Customer" asp-controller="Booking" asp-action="AvailableCars">View Cars</a>
 
-<h4>My Bookings</h4>
+    <a class="btn btn-outline-success btn-lg m-2"
+       asp-area="Customer" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
+</div>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">
-        You have no bookings yet.
+<!-- ================= Stats Cards ================= -->
+<div class="row mb-4 text-center">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary p-3 shadow-sm">
+            <h5>Total Bookings</h5>
+            <h3>@(ViewBag.TotalBookings ?? 0)</h3>
+        </div>
     </div>
-}
-else
-{
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Car</th>
-                <th>Pickup Date</th>
-                <th>Return Date</th>
-                <th>Total Cost</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var booking in Model)
-            {
-                var status = booking.ReturnDate < DateTime.Now ? "Completed" :
-                booking.PickupDate > DateTime.Now ? "Upcoming" : "Active";
+    <div class="col-md-4">
+        <div class="card text-white bg-success p-3 shadow-sm">
+            <h5>Upcoming Bookings</h5>
+            <h3>@(ViewBag.UpcomingBookings ?? 0)</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning p-3 shadow-sm">
+            <h5>Completed Bookings</h5>
+            <h3>@(ViewBag.CompletedBookings ?? 0)</h3>
+        </div>
+    </div>
+</div>
 
+<!-- ================= My Bookings Table ================= -->
+<h4>My Recent Bookings</h4>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Booking ID</th>
+            <th>Car</th>
+            <th>Pickup Date</th>
+            <th>Return Date</th>
+            <th>Total Cost</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var booking in Model)
+            {
                 <tr>
-                    <td>@booking.Car.CarName (@booking.Car.CarModel)</td>
+                    <td>@booking.BookingID</td>
+                    <td>
+                        @if (booking.Car != null)
+                        {
+                            @($"{booking.Car.CarName} ({booking.Car.CarModel})")
+                        }
+                        else
+                        {
+                            @("N/A")
+                        }
+                    </td>
                     <td>@booking.PickupDate.ToString("dd MMM yyyy")</td>
                     <td>@booking.ReturnDate.ToString("dd MMM yyyy")</td>
                     <td>@booking.TotalCost.ToString("C")</td>
-                    <td>@status</td>
                 </tr>
             }
-        </tbody>
-    </table>
-}
-
-
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No bookings found.</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,5 +1,4 @@
 ﻿using CarRentalManagementSystem.Data;
-using CarRentalManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,30 +13,39 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             _context = context;
         }
+
+        // ================= Dashboard =================
         public IActionResult Index()
         {
-            // Session check: if admin not logged in, redirect to login
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("AdminUsername")))
-                return RedirectToAction("Login", "Account");
+            // 🔒 Session + Role check (only Admin allowed)
+            var role = HttpContext.Session.GetString("Role");
+            if (string.IsNullOrEmpty(role) || role != "Admin")
+            {
+                // 🚪 Redirect to global login page
+                return RedirectToAction("Login", "Account", new { area = "" });
+            }
 
-            // Dashboard data
+            // 📊 Dashboard Stats
             ViewBag.TotalCustomers = _context.Users.Count(u => u.Role == "Customer");
             ViewBag.TotalCars = _context.Cars.Count();
-            ViewBag.AvailableCars = _context.Cars.Count(c => c.IsAvailable);
-            ViewBag.RentedCars = _context.Cars.Count(c => !c.IsAvailable);
             ViewBag.TotalBookings = _context.Bookings.Count();
-            ViewBag.TotalRevenue = _context.Bookings.Sum(b => b.TotalCost);
 
+            // 🆕 Last 10 Bookings
+            var bookings = _context.Bookings
+                .Include(b => b.User)
+                .Include(b => b.Car)
+                .OrderByDescending(b => b.BookingID)
+                .Take(10)
+                .ToList();
 
-            var recentBookings = _context.Bookings
-                                         .Include(b => b.User)
-                                         .Include(b => b.Car)
-                                         .OrderByDescending(b => b.PickupDate)
-                                         .Take(5)
-                                         .ToList();
+            return View(bookings);
+        }
 
-            return View(recentBookings);
-            
+        // 🚪 Admin Logout
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // clear session
+            return RedirectToAction("Login", "Account", new { area = "" });
         }
     }
 }

@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using CarRentalManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,18 +15,33 @@ namespace CarRentalManagementSystem.Controllers
 
         public IActionResult Index()
         {
+            // 🚫 If Admin already logged in → force redirect to Dashboard
+            if (HttpContext.Session.GetString("Role") == "Admin")
+            {
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            }
+
             return View();
         }
 
         public IActionResult Privacy()
         {
+            // 🚫 Block Admin from seeing public pages
+            if (HttpContext.Session.GetString("Role") == "Admin")
+            {
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            }
+
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
     }
 }

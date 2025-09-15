@@ -1,12 +1,16 @@
-using CarRentalManagementSystem.Data;
+﻿using CarRentalManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
 builder.Services.AddControllersWithViews();
+
+// Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CarManagementSystem")));
+
+// Session
 builder.Services.AddSession(options =>
 {
     options.Cookie.HttpOnly = true;
@@ -14,9 +18,12 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromHours(4);
 });
 
+// HttpContextAccessor → _Layout.cshtml-ல use பண்ணுறது
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
-// Configure middleware
+// Middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -26,19 +33,19 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseSession(); // Make sure session is enabled if you use it
+app.UseSession(); // Session enabled
 app.UseAuthorization();
 
-// 1?? Route for areas (Admin)
+// ================= Routing =================
+
+// Areas (Admin, Customer)
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
-// 2?? Default route for non-area controllers
+// Default
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-   
 
 app.Run();
-

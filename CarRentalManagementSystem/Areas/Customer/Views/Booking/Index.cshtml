@@ -1,0 +1,50 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Bookings";
+}
+
+<h2>My Bookings</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Booking ID</th>
+            <th>Car</th>
+            <th>Pickup Date</th>
+            <th>Return Date</th>
+            <th>Total Cost</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var b in Model)
+            {
+                <tr>
+                    <td>@b.BookingID</td>
+                    <td>@(b.Car != null ? $"{b.Car.CarName} ({b.Car.CarModel})" : "N/A")</td>
+                    <td>@b.PickupDate.ToString("dd MMM yyyy")</td>
+                    <td>@b.ReturnDate.ToString("dd MMM yyyy")</td>
+                    <td>@b.TotalCost.ToString("C")</td>
+                    <td>
+                        <form asp-action="Cancel" method="post" onsubmit="return confirm('Cancel booking?');">
+                            <input type="hidden" name="id" value="@b.BookingID" />
+                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="6" class="text-center">No bookings found.</td></tr>
+        }
+    </tbody>
+</table>

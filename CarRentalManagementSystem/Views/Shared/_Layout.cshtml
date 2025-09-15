@@ -1,7 +1,9 @@
-﻿@using CarRentalManagementSystem
-@using CarRentalManagementSystem.Models
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var username = HttpContextAccessor.HttpContext.Session.GetString("Username");
+    var role = HttpContextAccessor.HttpContext.Session.GetString("Role");
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,10 +24,9 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- Navigation Items -->
                 <div class="collapse navbar-collapse" id="navbarNav">
+                    <!-- Left Side (Always Visible) -->
                     <ul class="navbar-nav me-auto">
-                        <!-- Normal Links -->
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -36,51 +37,29 @@
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a>
                         </li>
 
-                        <!-- Dropdown: Admin -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown"
-                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Admin
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Login">View Users</a></li>
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Booking" asp-action="Index">Manage Bookings</a></li>
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Cars" asp-action="Index">Manage Cars</a></li>
-                            </ul>
-                        </li>
-
-                        <!-- Dropdown: User -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
-                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                User
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" asp-area="Customer" asp-controller="Account" asp-action="Login">Register</a></li>
-                                <li><a class="dropdown-item" asp-area="Customer" asp-controller="Cars" asp-action="Register">View cars</a></li>
-                                <li><a class="dropdown-item" asp-area="Customer" asp-controller="Booking" asp-action="Index">My Bookings</a></li>
-                            </ul>
-                        </li>
-
-                        <!-- Dropdown: Cars -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="carDropdown"
-                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Cars
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="carDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Cars" asp-action="Index">Car List</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Cars" asp-action="Available">Available Cars</a></li>
-                            </ul>
-                        </li>
+                      
                     </ul>
 
-                    <!-- Right Side: Login/Register -->
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="btn btn-secondary" asp-area="Customer" asp-controller="Account" asp-action="Register">Register</a>
-                        </li>
-                        
+                    <!-- Right Side -->
+                    <ul class="navbar-nav ms-auto">
+                        @if (!string.IsNullOrEmpty(username))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white">Welcome, @username</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-danger ms-2" asp-controller="Account" asp-action="Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-secondary me-2" asp-controller="Account" asp-action="Register">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-secondary me-2" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

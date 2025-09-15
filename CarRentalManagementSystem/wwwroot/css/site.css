@@ -51,7 +51,7 @@ body {
    Hero Section (Home page intro)
 --------------------------------*/
 .hero {
-    background: url('/images/cars-bg.jpg') center/cover no-repeat;
+    background: url('/Images/Cars/car.jpg') center/cover no-repeat;
     height: 70vh;
     display: flex;
     align-items: center;

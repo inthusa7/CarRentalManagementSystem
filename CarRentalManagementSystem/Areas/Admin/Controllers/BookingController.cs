@@ -14,14 +14,16 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             _context = context;
         }
+
         public IActionResult Index()
         {
             var bookings = _context.Bookings
-                          .Include(b => b.User)
-                          .Include(b => b.Car)
-                          .ToList();
+                .Include(b => b.User)  // Matches your Booking.User property
+                .Include(b => b.Car)
+                .ToList();
             return View(bookings);
         }
+
         // GET: Admin/Booking/Create
         public IActionResult Create()
         {
@@ -37,17 +39,26 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Calculate total cost
-                var days = (model.ReturnDate - model.PickupDate).Days;
-                days = days == 0 ? 1 : days; // Minimum 1 day
                 var car = _context.Cars.Find(model.CarID);
+                if (car == null)
+                {
+                    ModelState.AddModelError("", "Selected car not found.");
+                    ViewBag.Users = _context.Users.ToList();
+                    ViewBag.Cars = _context.Cars.Where(c => c.IsAvailable).ToList();
+                    return View(model);
+                }
+
+                var days = (model.ReturnDate - model.PickupDate).Days;
+                if (days <= 0) days = 1;
+
                 model.TotalCost = days * car.DailyRate;
 
-                // Mark car unavailable
                 car.IsAvailable = false;
+                _context.Cars.Update(car);
 
                 _context.Bookings.Add(model);
                 _context.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -60,8 +71,7 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         public IActionResult Edit(int id)
         {
             var booking = _context.Bookings.Find(id);
-            if (booking == null)
-                return NotFound();
+            if (booking == null) return NotFound();
 
             ViewBag.Users = _context.Users.ToList();
             ViewBag.Cars = _context.Cars.ToList();
@@ -75,13 +85,23 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var days = (model.ReturnDate - model.PickupDate).Days;
-                days = days == 0 ? 1 : days;
                 var car = _context.Cars.Find(model.CarID);
+                if (car == null)
+                {
+                    ModelState.AddModelError("", "Selected car not found.");
+                    ViewBag.Users = _context.Users.ToList();
+                    ViewBag.Cars = _context.Cars.ToList();
+                    return View(model);
+                }
+
+                var days = (model.ReturnDate - model.PickupDate).Days;
+                if (days <= 0) days = 1;
+
                 model.TotalCost = days * car.DailyRate;
 
                 _context.Bookings.Update(model);
                 _context.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -98,8 +118,7 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
                 .Include(b => b.Car)
                 .FirstOrDefault(b => b.BookingID == id);
 
-            if (booking == null)
-                return NotFound();
+            if (booking == null) return NotFound();
 
             return View(booking);
         }
@@ -110,15 +129,18 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             var booking = _context.Bookings.Find(id);
-            if (booking == null)
-                return NotFound();
+            if (booking == null) return NotFound();
 
-            // Mark car available again
             var car = _context.Cars.Find(booking.CarID);
-            car.IsAvailable = true;
+            if (car != null)
+            {
+                car.IsAvailable = true;
+                _context.Cars.Update(car);
+            }
 
             _context.Bookings.Remove(booking);
             _context.SaveChanges();
+
             return RedirectToAction("Index");
             //summa check
         }

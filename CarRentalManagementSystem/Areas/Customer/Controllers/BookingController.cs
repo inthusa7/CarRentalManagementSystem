@@ -16,108 +16,117 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             _context = context;
         }
 
-        // GET: Customer/Booking/BookNow/5
-        public IActionResult BookNow(int carId)
+        // GET: /Customer/Booking/Create?carId=1
+        public IActionResult Create(int carId)
         {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
-                return RedirectToAction("Login", "Account", new { area = "Customer" });
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
 
-            var car = _context.Cars.Find(carId);
-            if (car == null || !car.IsAvailable)
-                return NotFound();
+            var car = _context.Cars.FirstOrDefault(c => c.CarID == carId);
+            if (car == null) return NotFound();
+
+            var vm = new BookingCreateViewModel
+            {
+                CarID = car.CarID,
+                CarName = car.CarName,
+                CarModel = car.CarModel,
+                DailyRate = car.DailyRate,
+                PickupDate = DateTime.Today,
+                ReturnDate = DateTime.Today.AddDays(1)
+            };
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(BookingCreateViewModel vm)
+        {
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
+
+            if (!ModelState.IsValid) return View(vm);
+
+            var car = _context.Cars.FirstOrDefault(c => c.CarID == vm.CarID);
+            if (car == null) return NotFound();
+
+            if (!car.IsAvailable)
+            {
+                ModelState.AddModelError("", "This car is currently not available.");
+                return View(vm);
+            }
+
+            if (vm.ReturnDate.Date <= vm.PickupDate.Date)
+            {
+                ModelState.AddModelError("", "Return date must be after pickup date.");
+                return View(vm);
+            }
+
+            int days = (vm.ReturnDate.Date - vm.PickupDate.Date).Days;
+            if (days < 1) days = 1;
+
+            decimal total = days * car.DailyRate;
 
             var booking = new Booking
             {
-                CarID = carId,
-                UserID = userId.Value,
-                PickupDate = DateTime.Now,
-                ReturnDate = DateTime.Now.AddDays(1)
+                CarID = car.CarID,
+                UserID = customerId.Value,   // ensure your session key is CustomerID -> maps to Booking.UserID
+                PickupDate = vm.PickupDate,
+                ReturnDate = vm.ReturnDate,
+                TotalCost = total
             };
 
-            ViewBag.Car = car;
-            return View(booking);
+            _context.Bookings.Add(booking);
+
+            // make car not available while booked (simple approach)
+            car.IsAvailable = false;
+            _context.Cars.Update(car);
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Booking", new { area = "Customer" });
         }
 
-        // POST: Customer/Booking/BookNow
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult BookNow(Booking model)
+        // My bookings
+        public IActionResult Index()
         {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
-                return RedirectToAction("Login", "Account", new { area = "Customer" });
-
-            model.UserID = userId.Value;
-
-            if (ModelState.IsValid)
-            {
-                var car = _context.Cars.Find(model.CarID);
-                if (car == null || !car.IsAvailable)
-                {
-                    ModelState.AddModelError("", "Car is not available.");
-                    ViewBag.Car = car;
-                    return View(model);
-                }
-
-                var days = (model.ReturnDate - model.PickupDate).Days;
-                days = days <= 0 ? 1 : days;
-                model.TotalCost = days * car.DailyRate;
-
-                car.IsAvailable = false;
-
-                _context.Bookings.Add(model);
-                _context.SaveChanges();
-
-                return RedirectToAction("History", "Booking", new { area = "Customer" });
-            }
-
-            ViewBag.Car = _context.Cars.Find(model.CarID);
-            return View(model);
-        }
-
-        // GET: Customer/Booking/History
-        public IActionResult History()
-        {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
-                return RedirectToAction("Login", "Account", new { area = "Customer" });
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
 
             var bookings = _context.Bookings
-                                   .Include(b => b.Car)
-                                   .Where(b => b.UserID == userId.Value)
-                                   .OrderByDescending(b => b.PickupDate)
-                                   .ToList();
+                .Include(b => b.Car)
+                .Where(b => b.UserID == customerId.Value)
+                .ToList();
 
             return View(bookings);
         }
 
-        // POST: Customer/Booking/Cancel
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Cancel(int id)
         {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
-                return RedirectToAction("Login", "Account", new { area = "Customer" });
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
 
-            var booking = _context.Bookings
-                                  .Include(b => b.Car)
-                                  .FirstOrDefault(b => b.BookingID == id && b.UserID == userId.Value);
+            var booking = _context.Bookings.Include(b => b.Car)
+                .FirstOrDefault(b => b.BookingID == id && b.UserID == customerId.Value);
 
-            if (booking == null)
-                return NotFound();
+            if (booking == null) return NotFound();
 
-            if (booking.PickupDate > DateTime.Now)
+            var car = booking.Car;
+
+            _context.Bookings.Remove(booking);
+            if (car != null)
             {
-                if (booking.Car != null)
-                    booking.Car.IsAvailable = true;
-
-                _context.Bookings.Remove(booking);
-                _context.SaveChanges();
+                car.IsAvailable = true;
+                _context.Cars.Update(car);
             }
 
-            return RedirectToAction("History");
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }
