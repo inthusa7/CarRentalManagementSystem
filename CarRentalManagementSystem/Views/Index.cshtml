@@ -1,0 +1,35 @@
+﻿@model IEnumerable<CarRentalManagementSystem.Models.Car>
+@{
+    ViewData["Title"] = "Car List";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+<h1 class="animate__animated animate__fadeInDown">Our Cars</h1>
+<a href="/Car/Create" class="btn btn-primary mb-3 animate__animated animate__fadeInUp animate__delay-1s">Add New Car</a>
+
+<div class="row">
+    @foreach (var car in Model)
+    {
+        <div class="col-md-4 mb-4 animate__animated animate__zoomIn">
+            <div class="card h-100 shadow-sm">
+                <img src="@car.ImageUrl" class="card-img-top" alt="@car.CarName">
+                <div class="card-body">
+                    <h5 class="card-title">@car.CarName (@car.CarModel)</h5>
+                    <p class="card-text"><strong>Daily Rate:</strong> @car.DailyRate.ToString("C")</p>
+                    <p class="card-text"><strong>Available:</strong> @(car.IsAvailable ? "Yes" : "No")</p>
+                    <a href="/Car/Details/@car.CarID" class="btn btn-info btn-sm">Details</a>
+                    <a href="/Car/Edit/@car.CarID" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="/Car/Delete/@car.CarID" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .card-img-top {
+        height: 180px;
+        object-fit: cover;
+    }
+</style>

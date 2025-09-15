@@ -1,6 +1,136 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<!-- Include Animate.css for animations -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+<!-- Hero Section -->
+<div class="privacy-hero position-relative text-dark">
+    <div class="privacy-overlay"></div>
+
+    <div class="container privacy-content text-center">
+        <h1 class="animate__animated animate__fadeInDown">Privacy Policy</h1>
+        <h2 class="animate__animated animate__fadeInDown animate__delay-1s">Your Data is Safe with Us</h2>
+        <p class="animate__animated animate__fadeInUp animate__delay-2s">
+            At <strong>Our Car Rental Management System</strong>, protecting your personal information is our top priority.
+            We collect only necessary data to provide a smooth and secure car rental experience.
+            Your information is used solely for processing bookings, improving our services, and ensuring secure transactions.
+        </p>
+    </div>
+</div>
+
+<!-- Privacy Details Section -->
+<div class="container privacy-details my-5">
+    <h2 class="text-center mb-4 animate__animated animate__fadeInUp">What We Collect & How We Use It</h2>
+    <div class="privacy-cards">
+        <div class="privacy-card animate__animated animate__fadeInLeft">
+            <h3>Personal Information</h3>
+            <p>We collect your name, email, phone number, and booking details to provide our services.</p>
+        </div>
+        <div class="privacy-card animate__animated animate__fadeInRight animate__delay-1s">
+            <h3>Payment Information</h3>
+            <p>Secure payment processing for bookings. We never store full credit card details on our servers.</p>
+        </div>
+        <div class="privacy-card animate__animated animate__fadeInLeft animate__delay-2s">
+            <h3>Cookies & Usage Data</h3>
+            <p>We use cookies to improve your website experience and remember your preferences.</p>
+        </div>
+        <div class="privacy-card animate__animated animate__fadeInRight animate__delay-3s">
+            <h3>Third-Party Sharing</h3>
+            <p>We do not sell your data. Information may only be shared with trusted partners for booking processing.</p>
+        </div>
+    </div>
+
+    <p class="mt-4 animate__animated animate__fadeInUp animate__delay-4s">
+        By using our platform, you consent to our Privacy Policy. We are committed to transparency and secure handling of your data.
+        For any questions regarding privacy, please <a href="/Home/Contact" style="color:#3498db;">contact us</a>.
+    </p>
+</div>
+
+<!-- CSS Styling -->
+<style>
+    .privacy-hero {
+        background-image: url('~/image/privacy-bg.jpg'); /* Replace with your image */
+        background-size: cover;
+        background-position: center;
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 50px 20px;
+        color: white;
+    }
+
+    .privacy-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+    }
+
+    .privacy-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .privacy-content h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .privacy-content h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+
+    .privacy-content p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    /* Privacy Cards */
+    .privacy-details {
+        text-align: center;
+    }
+
+    .privacy-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .privacy-card {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .privacy-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .privacy-card h3 {
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+
+    .privacy-card p {
+        color: #555;
+        font-size: 14px;
+    }
+
+    .privacy-details a {
+        text-decoration: none;
+        font-weight: bold;
+    }
+</style>

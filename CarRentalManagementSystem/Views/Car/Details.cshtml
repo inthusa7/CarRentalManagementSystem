@@ -1,0 +1,21 @@
+﻿@model CarRentalManagementSystem.Models.Car
+@{
+    ViewData["Title"] = "Car Details";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+<h1 class="animate__animated animate__fadeInDown">Car Details</h1>
+
+<div class="card mb-3 animate__animated animate__fadeInUp">
+    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.CarName">
+    <div class="card-body">
+        <h5 class="card-title">@Model.CarName (@Model.CarModel)</h5>
+        <p class="card-text"><strong>Daily Rate:</strong> @Model.DailyRate.ToString("C")</p>
+        <p class="card-text"><strong>Available:</strong> @(Model.IsAvailable ? "Yes" : "No")</p>
+
+        <a href="/Car/Edit/@Model.CarID" class="btn btn-warning">Edit</a>
+        <a href="/Car/Delete/@Model.CarID" class="btn btn-danger">Delete</a>
+        <a href="/Car/Index" class="btn btn-secondary">Back</a>
+    </div>
+</div>

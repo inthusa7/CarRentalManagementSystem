@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http; // For IFormFile
 
 namespace CarRentalManagementSystem.Models
 {
@@ -17,12 +18,16 @@ namespace CarRentalManagementSystem.Models
         [Required, MaxLength(200)]
         public string ImageUrl { get; set; } = string.Empty;
 
+        // For file upload only, not mapped to DB
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
+
         public bool IsAvailable { get; set; } = true;
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal DailyRate { get; set; } = 50m;
 
-        // Navigation
+        // Navigation property
         public ICollection<Booking>? Bookings { get; set; }
     }
 }

@@ -1,0 +1,16 @@
+﻿@model CarRentalManagementSystem.Models.Car
+@{
+    ViewData["Title"] = "Delete Car";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+<h1 class="animate__animated animate__fadeInDown">Delete Car</h1>
+
+<p class="animate__animated animate__fadeInUp">Are you sure you want to delete <strong>@Model.CarName (@Model.CarModel)</strong>?</p>
+
+<form asp-action="DeleteConfirmed" method="post" class="animate__animated animate__fadeInUp animate__delay-1s">
+    <input type="hidden" asp-for="CarID" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="/Car/Index" class="btn btn-secondary">Cancel</a>
+</form>
