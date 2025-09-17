@@ -1,0 +1,40 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "Make Payment";
+}
+
+<h2>Make Payment</h2>
+
+<div class="card shadow-sm p-4" style="max-width: 500px;">
+    <form asp-action="Create" method="post">
+        <input type="hidden" name="bookingId" value="@ViewBag.BookingId" />
+
+        <div class="mb-3">
+            <label class="form-label">Booking ID</label>
+            <input type="text" class="form-control" value="@ViewBag.BookingId" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Amount</label>
+            <input type="text" class="form-control" value="@ViewBag.Amount.ToString("C")" readonly />
+            <input type="hidden" name="amount" value="@ViewBag.Amount" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Payment Method</label>
+            <select name="paymentMethod" class="form-select" required>
+                <option value="Cash">Cash</option>
+                <option value="Card">Card</option>
+                <option value="UPI">UPI</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Confirm Payment</button>
+        <a asp-area="Customer" asp-controller="Booking" asp-action="History" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+

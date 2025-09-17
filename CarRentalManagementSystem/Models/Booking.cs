@@ -25,6 +25,7 @@ namespace CarRentalManagementSystem.Models
         [Required]
         [Column(TypeName = "decimal(10,2)")]
         public decimal TotalCost { get; set; }
+        public bool IsPaid { get; set; }
 
         public User User { get; set; }
         public Car Car { get; set; }

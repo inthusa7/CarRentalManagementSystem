@@ -21,8 +21,9 @@ namespace CarRentalManagementSystem.Models
         public DateTime PaymentDate { get; set; } = DateTime.Now;
 
         [Required, MaxLength(50)]
-        public string PaymentMethod { get; set; } = "Cash"; // Cash, Card, etc.
+        public string PaymentMethod { get; set; } = "Cash"; // Cash, Card, UPI, etc.
 
+       
         public Booking Booking { get; set; }
     }
 }

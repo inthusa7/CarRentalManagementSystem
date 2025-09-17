@@ -4,12 +4,17 @@
 @{
 }
 @model IEnumerable<CarRentalManagementSystem.Models.Booking>
+
 @{
     Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "My Bookings";
 }
 
 <h2>My Bookings</h2>
+
+<p>
+    <a asp-area="Customer" asp-controller="Booking" asp-action="Create" class="btn btn-primary">+ Create New Booking</a>
+</p>
 
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
@@ -18,7 +23,8 @@
             <th>Car</th>
             <th>Pickup Date</th>
             <th>Return Date</th>
-            <th>Total Cost</th>
+            <th>Total Amount</th>
+            <th>Payment Status</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -34,17 +40,36 @@
                     <td>@b.ReturnDate.ToString("dd MMM yyyy")</td>
                     <td>@b.TotalCost.ToString("C")</td>
                     <td>
-                        <form asp-action="Cancel" method="post" onsubmit="return confirm('Cancel booking?');">
-                            <input type="hidden" name="id" value="@b.BookingID" />
-                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                        </form>
+                        @if (b.IsPaid)
+                        {
+                            <span class="badge bg-success">Paid</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!b.IsPaid)
+                        {
+                            <a asp-area="Customer" asp-controller="Payment" asp-action="Pay" asp-route-id="@b.BookingID" class="btn btn-primary btn-sm">Pay Now</a>
+                        }
+                        else
+                        {
+                            <form asp-action="Cancel" method="post" onsubmit="return confirm('Cancel booking?');">
+                                <input type="hidden" name="id" value="@b.BookingID" />
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }
         }
         else
         {
-            <tr><td colspan="6" class="text-center">No bookings found.</td></tr>
+            <tr>
+                <td colspan="7" class="text-center">No bookings found.</td>
+            </tr>
         }
     </tbody>
 </table>

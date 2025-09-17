@@ -1,23 +1,59 @@
-﻿@{
+﻿@using System.Linq
+@model IEnumerable<CarRentalManagementSystem.Models.Car>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <!-- Hero Section -->
 <div class="hero position-relative">
-
-   
-
-    <!-- Title / Heading -->
     <div class="hero-content text-start ms-5">
-        <h1>Welcome to Car Rental </h1>
-          <h2>  Management System</h2>
+        <h1>Welcome to Car Rental</h1>
+        <h2>Management System</h2>
         <p class="mt-3">
             Our Car Rental Management System makes it easy and convenient for customers to book cars online anytime, anywhere.
             We provide a wide range of vehicles – from economy cars to luxury models – to suit your travel needs.
             With simple registration, secure login, and transparent booking options, our platform ensures a hassle-free rental experience.
             Whether you are planning a short trip or a long journey, we are here to make your ride smooth, safe, and affordable.
         </p>
-       
     </div>
 </div>
+
+<!-- Available Cars Section -->
+<section class="container mt-5">
+    <h2 class="text-center mb-4">Available Cars</h2>
+
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var car in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="~/@car.ImageUrl" alt="@car.CarName" class="card-img-top" style="height:200px; object-fit:cover;" />
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@car.CarName (@car.CarModel)</h5>
+                            <p class="card-text flex-grow-1">
+                                @car.CarName <br />
+                                Price per day: @car.DailyRate.ToString("C")
+                            </p>
+                            <a asp-area="Customer" asp-controller="Booking" asp-action="Create" asp-route-carId="@car.CarID" class="btn btn-primary mt-auto">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p class="text-muted">No cars available at the moment.</p>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Optional Footer -->
+<footer class="mt-5">
+    &copy; @DateTime.Now.Year Car Rental Management System. All rights reserved.
+</footer>
 
