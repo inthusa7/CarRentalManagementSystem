@@ -1,9 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+﻿@model IEnumerable<CarRentalManagementSystem.Models.Booking>
 
 @{
     Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
@@ -52,7 +47,7 @@
                     <td>
                         @if (!b.IsPaid)
                         {
-                            <a asp-area="Customer" asp-controller="Payment" asp-action="Pay" asp-route-id="@b.BookingID" class="btn btn-primary btn-sm">Pay Now</a>
+                            <a asp-area="Customer" asp-controller="Payment" asp-action="Create" asp-route-bookingId="@b.BookingID" class="btn btn-primary btn-sm">Pay Now</a>
                         }
                         else
                         {

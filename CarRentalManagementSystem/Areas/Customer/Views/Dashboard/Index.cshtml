@@ -51,7 +51,6 @@
             <th>Total Amount</th>
             <th>Payment Status</th>
             <th>Action</th>
-            
         </tr>
     </thead>
     <tbody>
@@ -75,7 +74,7 @@
                 <td>
                     @if (!booking.IsPaid)
                     {
-                        <a asp-controller="Payment" asp-action="Pay" asp-route-id="@booking.BookingID" class="btn btn-primary btn-sm">
+                        <a asp-area="Customer" asp-controller="Payment" asp-action="Create" asp-route-bookingId="@booking.BookingID" class="btn btn-primary btn-sm">
                             Pay Now
                         </a>
                     }
@@ -87,4 +86,4 @@
             </tr>
         }
     </tbody>
-</table>
+</table

@@ -1,15 +1,16 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model IEnumerable<CarRentalManagementSystem.Models.Payment>
+﻿@model IEnumerable<CarRentalManagementSystem.Models.Payment>
 
 @{
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Payments";
 }
 
-<h2>Payments</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Payments</h2>
+    <a asp-area="Customer" asp-controller="Payment" asp-action="Create" class="btn btn-primary">
+        + ADD PAYMENT
+    </a>
+</div>
 
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
@@ -34,4 +35,3 @@
         }
     </tbody>
 </table>
-

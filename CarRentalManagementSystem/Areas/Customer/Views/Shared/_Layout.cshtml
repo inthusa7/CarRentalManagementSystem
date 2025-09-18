@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Customer - Car Rental System</title>
+    <title>@ViewData["Title"] - Customer - Car Rental System</title>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
         .navbar-nav .nav-link {
@@ -25,7 +25,9 @@
     <!-- ================= Navbar ================= -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0d6efd;">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="Customer" asp-controller="Dashboard" asp-action="Index">Car Rental</a>
+            <a class="navbar-brand" asp-area="Customer" asp-controller="Dashboard" asp-action="Index">
+                Car Rental
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCustomer"
                     aria-controls="navbarCustomer" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -33,26 +35,42 @@
 
             <div class="collapse navbar-collapse" id="navbarCustomer">
                 <ul class="navbar-nav me-auto">
+                    <!-- Book a Car -->
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" &&
-                                                                       ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Booking" asp-action="Index">Book a Car</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" &&
-                                                                       ViewContext.RouteData.Values["action"]?.ToString() == "MyBookings" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Profile" asp-action="Index">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payment" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Payment" asp-action="Index">Payments</a>
+                                            ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Booking" asp-action="Index">
+                            Book a Car
+                        </a>
                     </li>
 
+                    <!-- My Bookings -->
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" &&
+                                            ViewContext.RouteData.Values["action"]?.ToString() == "MyBookings" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Booking" asp-action="MyBookings">
+                            My Bookings
+                        </a>
+                    </li>
+
+                    <!-- Profile -->
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Profile" asp-action="Index">
+                            Profile
+                        </a>
+                    </li>
+
+                    <!-- Payments -->
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payment" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Payment" asp-action="Index">
+                            Payments
+                        </a>
+                    </li>
                 </ul>
+
+                <!-- Logout -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">
@@ -69,6 +87,8 @@
         @RenderBody()
     </div>
 
+    <!-- ================= Scripts ================= -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -1,6 +1,6 @@
 ﻿using CarRentalManagementSystem.Data;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalManagementSystem.Areas.Customer.Controllers
 {
@@ -14,21 +14,26 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            // show only available cars
-            var cars = _context.Cars.Where(c => c.IsAvailable).ToList();
-            return View(cars);
-        }
-
-        public IActionResult Details(int id)
-        {
-            // require user logged in
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var car = _context.Cars.FirstOrDefault(c => c.CarID == id);
+            var cars = await _context.Cars
+                .Where(c => c.IsAvailable)
+                .ToListAsync();
+
+            return View(cars);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
+
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == id);
             if (car == null) return NotFound();
 
             return View(car);

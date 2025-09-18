@@ -17,13 +17,13 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         }
 
         // GET: /Customer/Booking/Create?carId=1
-        public IActionResult Create(int carId)
+        public async Task<IActionResult> Create(int carId)
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var car = _context.Cars.FirstOrDefault(c => c.CarID == carId);
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == carId);
             if (car == null) return NotFound();
 
             var vm = new BookingCreateViewModel
@@ -40,7 +40,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(BookingCreateViewModel vm)
+        public async Task<IActionResult> Create(BookingCreateViewModel vm)
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
@@ -48,7 +48,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
 
             if (!ModelState.IsValid) return View(vm);
 
-            var car = _context.Cars.FirstOrDefault(c => c.CarID == vm.CarID);
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == vm.CarID);
             if (car == null) return NotFound();
 
             if (!car.IsAvailable)
@@ -66,53 +66,50 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             int days = (vm.ReturnDate.Date - vm.PickupDate.Date).Days;
             if (days < 1) days = 1;
 
-            decimal total = days * car.DailyRate;
-
             var booking = new Booking
             {
                 CarID = car.CarID,
-                UserID = customerId.Value,   // ensure your session key is CustomerID -> maps to Booking.UserID
+                UserID = customerId.Value,
                 PickupDate = vm.PickupDate,
                 ReturnDate = vm.ReturnDate,
-                TotalCost = total
+                TotalCost = days * car.DailyRate
             };
 
             _context.Bookings.Add(booking);
-
-            // make car not available while booked (simple approach)
             car.IsAvailable = false;
             _context.Cars.Update(car);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Booking", new { area = "Customer" });
+            return RedirectToAction("Index");
         }
 
-        // My bookings
-        public IActionResult Index()
+        // GET: My bookings
+        public async Task<IActionResult> Index()
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var bookings = _context.Bookings
+            var bookings = await _context.Bookings
                 .Include(b => b.Car)
                 .Where(b => b.UserID == customerId.Value)
-                .ToList();
+                .OrderByDescending(b => b.PickupDate)
+                .ToListAsync();
 
             return View(bookings);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Cancel(int id)
+        public async Task<IActionResult> Cancel(int id)
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var booking = _context.Bookings.Include(b => b.Car)
-                .FirstOrDefault(b => b.BookingID == id && b.UserID == customerId.Value);
+            var booking = await _context.Bookings.Include(b => b.Car)
+                .FirstOrDefaultAsync(b => b.BookingID == id && b.UserID == customerId.Value);
 
             if (booking == null) return NotFound();
 
@@ -125,7 +122,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
                 _context.Cars.Update(car);
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
     }

@@ -1,6 +1,7 @@
 ﻿using CarRentalManagementSystem.Data;
 using CarRentalManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalManagementSystem.Areas.Customer.Controllers
 {
@@ -13,19 +14,30 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+
+        public async Task<IActionResult> Index()
         {
-            var payments = _context.Payments
-               .OrderByDescending(p => p.PaymentDate)
-               .ToList();
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account");
+
+            var payments = await _context.Payments
+                .Include(p => p.Booking)
+                .Where(p => p.Booking.UserID == customerId.Value)
+                .OrderByDescending(p => p.PaymentDate)
+                .ToListAsync();
+
             return View(payments);
-            
         }
-        // Show payment form
+
         [HttpGet]
-        public IActionResult Create(int bookingId)
+        public async Task<IActionResult> Create(int bookingId)
         {
-            var booking = _context.Bookings.FirstOrDefault(b => b.BookingID == bookingId);
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account");
+
+            var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.BookingID == bookingId && b.UserID == customerId.Value);
             if (booking == null) return NotFound();
 
             ViewBag.BookingId = booking.BookingID;
@@ -33,12 +45,15 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             return View();
         }
 
-        // Save payment
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(int bookingId, decimal amount, string paymentMethod)
+        public async Task<IActionResult> Create(int bookingId, decimal amount, string paymentMethod)
         {
-            var booking = _context.Bookings.FirstOrDefault(b => b.BookingID == bookingId);
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account");
+
+            var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.BookingID == bookingId && b.UserID == customerId.Value);
             if (booking == null) return NotFound();
 
             var payment = new Payment
@@ -50,12 +65,9 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             };
 
             _context.Payments.Add(payment);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            // Redirect to booking history after payment
-            return RedirectToAction("History", "Booking");
+            return RedirectToAction("Index", "Booking", new { area = "Customer" });
         }
     }
 }
-
-

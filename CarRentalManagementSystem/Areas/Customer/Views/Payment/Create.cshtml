@@ -1,40 +1,45 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@{
+﻿@{
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Make Payment";
 }
 
-<h2>Make Payment</h2>
+<h2 class="mb-4">Make Payment</h2>
 
-<div class="card shadow-sm p-4" style="max-width: 500px;">
-    <form asp-action="Create" method="post">
+<div class="card shadow-sm p-4 mx-auto" style="max-width: 500px;">
+    <form asp-area="Customer" asp-controller="Payment" asp-action="Create" method="post">
+        @* Hidden fields to pass booking info *@
         <input type="hidden" name="bookingId" value="@ViewBag.BookingId" />
+        <input type="hidden" name="amount" value="@ViewBag.Amount" />
 
+        @* Booking ID display *@
         <div class="mb-3">
             <label class="form-label">Booking ID</label>
             <input type="text" class="form-control" value="@ViewBag.BookingId" readonly />
         </div>
 
+        @* Amount display *@
         <div class="mb-3">
             <label class="form-label">Amount</label>
             <input type="text" class="form-control" value="@ViewBag.Amount.ToString("C")" readonly />
-            <input type="hidden" name="amount" value="@ViewBag.Amount" />
         </div>
 
-        <div class="mb-3">
+        @* Payment method select *@
+        <div class="mb-4">
             <label class="form-label">Payment Method</label>
             <select name="paymentMethod" class="form-select" required>
+                <option value="">-- Select Payment Method --</option>
                 <option value="Cash">Cash</option>
                 <option value="Card">Card</option>
                 <option value="UPI">UPI</option>
             </select>
         </div>
 
-        <button type="submit" class="btn btn-success">Confirm Payment</button>
-        <a asp-area="Customer" asp-controller="Booking" asp-action="History" class="btn btn-secondary">Cancel</a>
+        @* Buttons *@
+        <div class="d-flex gap-2 justify-content-between">
+            <button type="submit" class="btn btn-success w-50">+ ADD PAYMENT</button>
+            <a asp-area="Customer" asp-controller="Booking" asp-action="Index" class="btn btn-secondary w-50 text-center">
+                Cancel
+            </a>
+        </div>
     </form>
 </div>
-

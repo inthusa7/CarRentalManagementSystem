@@ -14,18 +14,20 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
                 return RedirectToAction("Login", "Account");
 
-            int customerId = HttpContext.Session.GetInt32("CustomerID").GetValueOrDefault();
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account");
 
-            var myBookings = _context.Bookings
-                                     .Include(b => b.Car)
-                                     .Where(b => b.UserID == customerId)
-                                     .OrderByDescending(b => b.PickupDate) // ✅ Fix: BookingDate → PickupDate
-                                     .ToList();
+            var myBookings = await _context.Bookings
+                .Include(b => b.Car)
+                .Where(b => b.UserID == customerId.Value)
+                .OrderByDescending(b => b.PickupDate)
+                .ToListAsync();
 
             return View(myBookings);
         }

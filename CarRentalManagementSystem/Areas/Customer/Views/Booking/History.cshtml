@@ -1,41 +1,52 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+
 @{
-}
-@model List<CarRentalManagementSystem.Models.Booking>
-@{
-    ViewData["Title"] = "My Bookings";
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Booking History";
 }
 
-<h2 class="mb-4">My Bookings</h2>
+<h2>Booking History</h2>
 
-<table class="table table-bordered table-striped">
-    <thead>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
         <tr>
+            <th>Booking ID</th>
             <th>Car</th>
-            <th>Pickup Date</th>
-            <th>Return Date</th>
-            <th>Total Cost (LKR)</th>
-            <th>Action</th>
+            <th>Pickup</th>
+            <th>Return</th>
+            <th>Total</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var booking in Model)
+        @if (Model != null && Model.Any())
+        {
+            foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.BookingID</td>
+                    <td>@(booking.Car != null ? $"{booking.Car.CarName} ({booking.Car.CarModel})" : "N/A")</td>
+                    <td>@booking.PickupDate.ToString("dd MMM yyyy")</td>
+                    <td>@booking.ReturnDate.ToString("dd MMM yyyy")</td>
+                    <td>@booking.TotalCost.ToString("C")</td>
+                    <td>
+                        @if (booking.IsPaid)
+                        {
+                            <span class="badge bg-success">Paid</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Unpaid</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@booking.Car.CarName (@booking.Car.CarModel)</td>
-                <td>@booking.PickupDate.ToShortDateString()</td>
-                <td>@booking.ReturnDate.ToShortDateString()</td>
-                <td>@String.Format("{0:N0}", booking.TotalCost)</td>
-                <td>
-                    <form asp-action="Cancel" method="post">
-                        <input type="hidden" name="id" value="@booking.BookingID" />
-                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                    </form>
-                </td>
+                <td colspan="6" class="text-center">No booking history found.</td>
             </tr>
         }
     </tbody>
 </table>
-
