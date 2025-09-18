@@ -15,6 +15,16 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         {
             _context = context;
         }
+        // GET: /Customer/Booking/AvailableCars
+        public async Task<IActionResult> AvailableCars()
+        {
+            var cars = await _context.Cars
+                .Where(c => c.IsAvailable)
+                .ToListAsync();
+
+            return View(cars);
+        }
+
 
         // GET: /Customer/Booking/Create?carId=1
         public async Task<IActionResult> Create(int carId)
