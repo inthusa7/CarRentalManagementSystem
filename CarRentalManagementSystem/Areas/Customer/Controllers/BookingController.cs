@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using CarRentalManagementSystem.Data;
 using CarRentalManagementSystem.Models;
@@ -15,16 +15,20 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
         {
             _context = context;
         }
+
         // GET: /Customer/Booking/AvailableCars
         public async Task<IActionResult> AvailableCars()
         {
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
+
             var cars = await _context.Cars
                 .Where(c => c.IsAvailable)
                 .ToListAsync();
 
             return View(cars);
         }
-
 
         // GET: /Customer/Booking/Create?carId=1
         public async Task<IActionResult> Create(int carId)
@@ -33,7 +37,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == carId);
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == carId && c.IsAvailable);
             if (car == null) return NotFound();
 
             var vm = new BookingCreateViewModel
@@ -43,30 +47,35 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
                 CarModel = car.CarModel,
                 DailyRate = car.DailyRate,
                 PickupDate = DateTime.Today,
-                ReturnDate = DateTime.Today.AddDays(1)
+                ReturnDate = DateTime.Today.AddDays(1),
+                ImageUrl = car.ImageUrl
             };
+
             return View(vm);
         }
 
+        // POST: /Customer/Booking/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookingCreateViewModel vm)
         {
+            // 1️⃣ Check session
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            if (!ModelState.IsValid) return View(vm);
+            if (!ModelState.IsValid)
+                return View(vm);
 
-            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == vm.CarID);
-            if (car == null) return NotFound();
-
-            if (!car.IsAvailable)
+            // 2️⃣ Fetch the car
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == vm.CarID && c.IsAvailable);
+            if (car == null)
             {
-                ModelState.AddModelError("", "This car is currently not available.");
+                ModelState.AddModelError("", "Selected car is not available.");
                 return View(vm);
             }
 
+            // 3️⃣ Validate dates
             if (vm.ReturnDate.Date <= vm.PickupDate.Date)
             {
                 ModelState.AddModelError("", "Return date must be after pickup date.");
@@ -76,22 +85,28 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             int days = (vm.ReturnDate.Date - vm.PickupDate.Date).Days;
             if (days < 1) days = 1;
 
+            // 4️⃣ Create booking
             var booking = new Booking
             {
                 CarID = car.CarID,
                 UserID = customerId.Value,
                 PickupDate = vm.PickupDate,
                 ReturnDate = vm.ReturnDate,
-                TotalCost = days * car.DailyRate
+                TotalCost = days * car.DailyRate,
+                IsPaid = false
             };
 
             _context.Bookings.Add(booking);
+
+            // 5️⃣ Mark car as unavailable
             car.IsAvailable = false;
             _context.Cars.Update(car);
 
+            // 6️⃣ Save to DB
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            // 7️⃣ Redirect to Payment page immediately
+            return RedirectToAction("Create", "Payment", new { area = "Customer", bookingId = booking.BookingID });
         }
 
         // GET: My bookings
@@ -110,6 +125,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             return View(bookings);
         }
 
+        // POST: Cancel booking
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
@@ -118,7 +134,8 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var booking = await _context.Bookings.Include(b => b.Car)
+            var booking = await _context.Bookings
+                .Include(b => b.Car)
                 .FirstOrDefaultAsync(b => b.BookingID == id && b.UserID == customerId.Value);
 
             if (booking == null) return NotFound();
@@ -126,6 +143,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             var car = booking.Car;
 
             _context.Bookings.Remove(booking);
+
             if (car != null)
             {
                 car.IsAvailable = true;
