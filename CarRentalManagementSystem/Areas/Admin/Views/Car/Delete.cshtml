@@ -1,15 +1,15 @@
-﻿@model CarRentalManagementSystem.Models.Car
+﻿@foreach (var car in Model)
+{
+    <tr>
+        <td>@car.CarName</td>
+        <td>@car.CarModel</td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@car.Id" class="btn btn-primary">Edit</a>
 
-<h2>Delete Car</h2>
+            <form asp-action="Delete" asp-route-id="@car.Id" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </td>
+    </tr>
+}
 
-<div>
-    <h4>Are you sure you want to delete this car?</h4>
-    <p><strong>@Model.CarName</strong> - @Model.CarModel</p>
-    <img src="@Model.ImageUrl" width="200"/>
-</div>
-
-<form asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" asp-for="CarID" />
-    <button type="submit" class="btn btn-danger">Yes, Delete</button> |
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>

@@ -2,35 +2,45 @@
 
 <h2>Manage Cars</h2>
 <a class="btn btn-primary" href="/Admin/Car/Create">+ Add New Car</a>
-<br /><br />
+<br />
+<br />
 
-<table class="table table-bordered">
-    <thead>
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
         <tr>
             <th>Car Name</th>
             <th>Car Model</th>
             <th>Daily Rate</th>
             <th>Available</th>
+            <th>Seats</th>
+            <th>Color</th>
+            <th>Location</th>
             <th>Image</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var car in Model)
-{
-        <tr>
-            <td>@car.CarName</td>
-            <td>@car.CarModel</td>
-            <td>@car.DailyRate</td>
-            <td>@(car.IsAvailable ? "Yes" : "No")</td>
-            <td>
-                <img src="@car.ImageUrl" alt="Car Image" width="100" />
-            </td>
-            <td>
-                <a class="btn btn-warning btn-sm" href="/Admin/Car/Edit/@car.CarID">Edit</a> |
-                <a class="btn btn-danger btn-sm" href="/Admin/Car/Delete/@car.CarID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var car in Model)
+        {
+            <tr>
+                <td>@car.CarName</td>
+                <td>@car.CarModel</td>
+                <td>@car.DailyRate.ToString("C")</td>
+                <td>@(car.IsAvailable ? "Yes" : "No")</td>
+                <td>@car.SeatCount</td>
+                <td>@car.CarColor</td>
+                <td>@car.Location</td>
+                <td>
+                    <img src="@car.ImageUrl" alt="Car Image" width="100" />
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-sm" asp-controller="Car" asp-action="Edit" asp-route-id="@car.CarID">Edit</a>
+
+                    <form asp-controller="Car" asp-action="Delete" asp-route-id="@car.CarID" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

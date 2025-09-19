@@ -21,6 +21,9 @@ namespace CarRentalManagementSystem.Models
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal DailyRate { get; set; } = 50m;
+        public int SeatCount { get; set; }
+        public string CarColor { get; set; }
+        public string Location { get; set; }
 
         // Navigation
         public ICollection<Booking>? Bookings { get; set; }
