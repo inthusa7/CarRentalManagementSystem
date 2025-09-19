@@ -1,0 +1,38 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<CarRentalManagementSystem.Models.Car>
+
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Available Cars";
+}
+
+<h2>Available Cars</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Car</th>
+            <th>Model</th>
+            <th>Rate</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var car in Model)
+        {
+            <tr>
+                <td>@car.CarName</td>
+                <td>@car.CarModel</td>
+                <td>@car.DailyRate.ToString("C")</td>
+                <td>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Create" asp-route-carId="@car.CarID"
+                       class="btn btn-success">Book Now</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

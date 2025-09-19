@@ -1,0 +1,50 @@
+﻿@model CarRentalManagementSystem.Models.BookingCreateViewModel
+
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Book Car";
+}
+
+<h2>Book @Model.CarName (@Model.CarModel)</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <img src="@Model.ImageUrl" alt="@Model.CarName" class="img-fluid mb-3" />
+        <p><strong>Daily Rate:</strong> @Model.DailyRate.ToString("C")</p>
+    </div>
+
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <input type="hidden" asp-for="CarID" />
+            <input type="hidden" asp-for="CarName" />
+            <input type="hidden" asp-for="CarModel" />
+            <input type="hidden" asp-for="DailyRate" />
+            <input type="hidden" asp-for="ImageUrl" />
+
+            <div class="mb-3">
+                <label asp-for="CustomerName" class="form-label"></label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PickupDate" class="form-label"></label>
+                <input asp-for="PickupDate" class="form-control" type="date" />
+                <span asp-validation-for="PickupDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ReturnDate" class="form-label"></label>
+                <input asp-for="ReturnDate" class="form-control" type="date" />
+                <span asp-validation-for="ReturnDate" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Book Now</button>
+            <a asp-action="Index" asp-controller="Car" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

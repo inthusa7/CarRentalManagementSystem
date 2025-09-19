@@ -10,7 +10,7 @@ namespace CarRentalManagementSystem.Models
 
         [Required]
         [ForeignKey("User")]
-        public int CustomerID { get; set; }   // UserID → CustomerID
+        public int UserID { get; set; }   // UserID → CustomerID
 
         [Required]
         [ForeignKey("Car")]
@@ -25,8 +25,12 @@ namespace CarRentalManagementSystem.Models
         [Required]
         [Column(TypeName = "decimal(10,2)")]
         public decimal TotalCost { get; set; }
+        public bool IsPaid { get; set; }
 
         public User User { get; set; }
         public Car Car { get; set; }
+
+
+
     }
 }

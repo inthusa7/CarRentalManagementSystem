@@ -15,7 +15,7 @@ namespace CarRentalManagementSystem.Models
         public string CarModel { get; set; } = string.Empty;
 
         [Required, MaxLength(200)]
-        public string ImageUrl { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = "Images/Cars/car2.jpg";
 
         public bool IsAvailable { get; set; } = true;
 

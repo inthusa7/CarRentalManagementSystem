@@ -1,0 +1,46 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<CarRentalManagementSystem.Models.Payment>
+
+@{
+    ViewData["Title"] = "Payments";
+}
+
+<h2>All Payments</h2>
+
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Payment ID</th>
+            <th>Booking ID</th>
+            <th>Customer</th>
+            <th>Car</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var payment in Model)
+        {
+            <tr>
+                <td>@payment.PaymentID</td>
+                <td>@payment.BookingID</td>
+                <td>@payment.Booking.User.Username</td>
+                <td>@payment.Booking.Car.CarName</td>
+                <td>@payment.Amount.ToString("C")</td>
+                <td>@payment.PaymentMethod</td>
+                <td>@payment.PaymentDate.ToString("dd MMM yyyy, hh:mm tt")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@payment.PaymentID" class="btn btn-info btn-sm">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

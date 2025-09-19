@@ -51,7 +51,7 @@ body {
    Hero Section (Home page intro)
 --------------------------------*/
 .hero {
-    background: url('/images/cars-bg.jpg') center/cover no-repeat;
+    background: url('/Images/Cars/car.jpg') center/cover no-repeat;
     height: 70vh;
     display: flex;
     align-items: center;
@@ -82,44 +82,62 @@ body {
         text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
     }
 
+/* Cards */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-/* ------------------------------
+/* Buttons */
+.btn-primary {
+    border-radius: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-content {
+        text-align: center;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    /* ------------------------------
    Buttons
 --------------------------------*/
-.btn-admin {
-    background-color: #0d6efd; /* Blue for admin */
-    color: #fff;
-    margin-right: 10px;
-}
-
-    .btn-admin:hover {
-        background-color: #0b5ed7;
+    .btn-admin {
+        background-color: #0d6efd; /* Blue for admin */
+        color: #fff;
+        margin-right: 10px;
     }
 
-.btn-customer {
-    background-color: #6c757d; /* Ash / Gray for customer */
-    color: #fff;
-}
+        .btn-admin:hover {
+            background-color: #0b5ed7;
+        }
 
-    .btn-customer:hover {
-        background-color: #5c636a;
+    .btn-customer {
+        background-color: #6c757d; /* Ash / Gray for customer */
+        color: #fff;
     }
 
-.login-buttons .btn {
-    border-radius: 8px;
-    padding: 8px 18px;
-    font-weight: 500;
-}
+        .btn-customer:hover {
+            background-color: #5c636a;
+        }
+
+    .login-buttons .btn {
+        border-radius: 8px;
+        padding: 8px 18px;
+        font-weight: 500;
+    }
 
 
-/* ------------------------------
+    /* ------------------------------
    Footer
 --------------------------------*/
-footer {
-    background: #212529;
-    color: #adb5bd;
-    padding: 15px 0;
-    text-align: center;
-}
+    footer {
+        background: #212529;
+        color: #adb5bd;
+        padding: 15px 0;
+        text-align: center;
+    }
 
   

@@ -29,6 +29,7 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             ViewBag.TotalCustomers = _context.Users.Count(u => u.Role == "Customer");
             ViewBag.TotalCars = _context.Cars.Count();
             ViewBag.TotalBookings = _context.Bookings.Count();
+            ViewBag.TotalRevenue = _context.Payments.Sum(p => (decimal?)p.Amount) ?? 0;
 
             // 🆕 Last 10 Bookings
             var bookings = _context.Bookings

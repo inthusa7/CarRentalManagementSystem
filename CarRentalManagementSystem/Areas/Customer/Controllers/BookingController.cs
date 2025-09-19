@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using CarRentalManagementSystem.Data;
 using CarRentalManagementSystem.Models;
@@ -16,105 +16,142 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             _context = context;
         }
 
-        // GET: Customer/Booking/BookNow/5
-        public IActionResult BookNow(int carId)
+        // GET: /Customer/Booking/AvailableCars
+        public async Task<IActionResult> AvailableCars()
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var car = _context.Cars.Find(carId);
-            if (car == null || !car.IsAvailable)
-                return NotFound();
+            var cars = await _context.Cars
+                .Where(c => c.IsAvailable)
+                .ToListAsync();
 
-            var booking = new Booking
+            return View(cars);
+        }
+
+        // GET: /Customer/Booking/Create?carId=1
+        public async Task<IActionResult> Create(int carId)
+        {
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
+
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == carId && c.IsAvailable);
+            if (car == null) return NotFound();
+
+            var vm = new BookingCreateViewModel
             {
-                CarID = carId,
-                CustomerID = customerId.Value,
-                PickupDate = DateTime.Now,
-                ReturnDate = DateTime.Now.AddDays(1)
+                CarID = car.CarID,
+                CarName = car.CarName,
+                CarModel = car.CarModel,
+                DailyRate = car.DailyRate,
+                PickupDate = DateTime.Today,
+                ReturnDate = DateTime.Today.AddDays(1),
+                ImageUrl = car.ImageUrl
             };
 
-            ViewBag.Car = car;
-            return View(booking);
+            return View(vm);
         }
 
-        // POST: Customer/Booking/BookNow
+        // POST: /Customer/Booking/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult BookNow(Booking model)
+        public async Task<IActionResult> Create(BookingCreateViewModel vm)
         {
+            // 1️⃣ Check session
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            model.CustomerID = customerId.Value;
+            if (!ModelState.IsValid)
+                return View(vm);
 
-            if (ModelState.IsValid)
+            // 2️⃣ Fetch the car
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == vm.CarID && c.IsAvailable);
+            if (car == null)
             {
-                var car = _context.Cars.Find(model.CarID);
-                if (car == null || !car.IsAvailable)
-                {
-                    ModelState.AddModelError("", "Car is not available.");
-                    ViewBag.Car = car;
-                    return View(model);
-                }
-
-                var days = (model.ReturnDate - model.PickupDate).Days;
-                if (days <= 0) days = 1;
-                model.TotalCost = days * car.DailyRate;
-
-                car.IsAvailable = false;
-
-                _context.Bookings.Add(model);
-                _context.SaveChanges();
-
-                return RedirectToAction("History");
+                ModelState.AddModelError("", "Selected car is not available.");
+                return View(vm);
             }
 
-            ViewBag.Car = _context.Cars.Find(model.CarID);
-            return View(model);
+            // 3️⃣ Validate dates
+            if (vm.ReturnDate.Date <= vm.PickupDate.Date)
+            {
+                ModelState.AddModelError("", "Return date must be after pickup date.");
+                return View(vm);
+            }
+
+            int days = (vm.ReturnDate.Date - vm.PickupDate.Date).Days;
+            if (days < 1) days = 1;
+
+            // 4️⃣ Create booking
+            var booking = new Booking
+            {
+                CarID = car.CarID,
+                UserID = customerId.Value,
+                PickupDate = vm.PickupDate,
+                ReturnDate = vm.ReturnDate,
+                TotalCost = days * car.DailyRate,
+                IsPaid = false
+            };
+
+            _context.Bookings.Add(booking);
+
+            // 5️⃣ Mark car as unavailable
+            car.IsAvailable = false;
+            _context.Cars.Update(car);
+
+            // 6️⃣ Save to DB
+            await _context.SaveChangesAsync();
+
+            // 7️⃣ Redirect to Payment page immediately
+            return RedirectToAction("Create", "Payment", new { area = "Customer", bookingId = booking.BookingID });
         }
 
-        // GET: Customer/Booking/History
-        public IActionResult History()
+        // GET: My bookings
+        public async Task<IActionResult> Index()
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var bookings = _context.Bookings
-                                   .Include(b => b.Car)
-                                   .Where(b => b.CustomerID == customerId.Value)
-                                   .OrderByDescending(b => b.PickupDate)
-                                   .ToList();
+            var bookings = await _context.Bookings
+                .Include(b => b.Car)
+                .Where(b => b.UserID == customerId.Value)
+                .OrderByDescending(b => b.PickupDate)
+                .ToListAsync();
 
             return View(bookings);
         }
 
-        // POST: Customer/Booking/Cancel
+        // POST: Cancel booking
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Cancel(int id)
+        public async Task<IActionResult> Cancel(int id)
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            var booking = _context.Bookings
-                                  .Include(b => b.Car)
-                                  .FirstOrDefault(b => b.BookingID == id && b.CustomerID == customerId.Value);
+            var booking = await _context.Bookings
+                .Include(b => b.Car)
+                .FirstOrDefaultAsync(b => b.BookingID == id && b.UserID == customerId.Value);
 
-            if (booking == null)
-                return NotFound();
+            if (booking == null) return NotFound();
 
-            if (booking.Car != null)
-                booking.Car.IsAvailable = true;
+            var car = booking.Car;
 
             _context.Bookings.Remove(booking);
-            _context.SaveChanges();
 
-            return RedirectToAction("History");
+            if (car != null)
+            {
+                car.IsAvailable = true;
+                _context.Cars.Update(car);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
     }
 }
