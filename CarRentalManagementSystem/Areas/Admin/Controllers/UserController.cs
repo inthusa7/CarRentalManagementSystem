@@ -1,5 +1,4 @@
 ﻿using CarRentalManagementSystem.Data;
-using CarRentalManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalManagementSystem.Areas.Admin.Controllers
@@ -14,7 +13,7 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             _context = context;
         }
 
-        // ----- CRUD Users (Admin Only) -----
+        // View list of users (Admin only)
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("Role") != "Admin")
@@ -24,13 +23,18 @@ namespace CarRentalManagementSystem.Areas.Admin.Controllers
             return View(users);
         }
 
-        public IActionResult Create()
+        // View user details (Admin only)
+        public IActionResult Details(int? id)
         {
             if (HttpContext.Session.GetString("Role") != "Admin")
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            return View();
-        }
+            if (id == null) return NotFound();
 
+            var user = _context.Users.Find(id);
+            if (user == null) return NotFound();
+
+            return View(user);
+        }
     }
 }

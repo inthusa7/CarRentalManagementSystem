@@ -5,88 +5,83 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - Customer - Car Rental System</title>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
         .navbar-nav .nav-link {
-            font-weight: 500; /* semi-bold */
+            font-weight: 500;
         }
 
-            .navbar-nav .nav-link.active {
-                font-weight: 700; /* bold */
-                color: #fff !important;
-                background-color: #0d6efd; /* blue for active link */
-                border-radius: 5px;
-                padding: 5px 10px;
-            }
+        .navbar-nav .nav-link.active {
+            font-weight: 700;
+            color: #fff !important;
+            background-color: #0d6efd;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
     </style>
 </head>
 <body>
-    <!-- ================= Navbar ================= -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0d6efd;">
+    <!-- ======== Customer Navbar ======== -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="Customer" asp-controller="Dashboard" asp-action="Index">
-                Car Rental
-            </a>
+            <a class="navbar-brand" asp-area="Customer" asp-controller="Dashboard" asp-action="Index">Car Rental</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCustomer"
                     aria-controls="navbarCustomer" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarCustomer">
-                <ul class="navbar-nav me-auto">
-                    <!----Home--->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Home -->
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Dashboard" asp-action="Index">
-                            Home
-                        </a>
+                           asp-area="Customer" asp-controller="Dashboard" asp-action="Index">Home</a>
                     </li>
 
                     <!-- Book a Car -->
                     <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" &&
-                                            ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Booking" asp-action="Index">
-                            Book a Car
-                        </a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Booking" asp-action="Index">Book a Car</a>
                     </li>
 
                     <!-- Profile -->
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Profile" asp-action="Index">
-                            Profile
-                        </a>
+                           asp-area="Customer" asp-controller="Profile" asp-action="Index">Profile</a>
                     </li>
 
                     <!-- Payments -->
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payment" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Payment" asp-action="Index">
-                            Payments
-                        </a>
+                           asp-area="Customer" asp-controller="Payment" asp-action="Index">Payments</a>
                     </li>
                 </ul>
 
-                <!-- Logout -->
                 <ul class="navbar-nav">
+                    <!-- Welcome Username -->
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">
-                            Logout (@HttpContextAccessor.HttpContext.Session.GetString("Username"))
-                        </a>
+                        <span class="navbar-text text-white me-3">
+                            Hello, @HttpContextAccessor.HttpContext?.Session?.GetString("Username")
+                        </span>
+                    </li>
+
+                    <!-- Logout -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- ================= Body ================= -->
-    <div class="container mt-3">
+    <!-- ======== Body ======== -->
+    <div class="container mt-4">
         @RenderBody()
     </div>
 
-    <!-- ================= Scripts ================= -->
+    <!-- ======== Scripts ======== -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>

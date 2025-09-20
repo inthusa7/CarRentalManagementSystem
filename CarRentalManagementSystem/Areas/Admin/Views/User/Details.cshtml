@@ -1,0 +1,41 @@
+@model CarRentalManagementSystem.Models.User
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "User Details";
+}
+
+<h2>User Details</h2>
+
+<div class="card">
+    <div class="card-header">
+        <strong>@Model.Username</strong>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">User ID</dt>
+            <dd class="col-sm-9">@Model.UserID</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Contact No</dt>
+            <dd class="col-sm-9">@Model.ContactNo</dd>
+
+            <dt class="col-sm-3">Alternate Contact No</dt>
+            <dd class="col-sm-9">@Model.AltContactNo</dd>
+
+            <dt class="col-sm-3">Address</dt>
+            <dd class="col-sm-9">@Model.Address</dd>
+
+            <dt class="col-sm-3">Driver License No</dt>
+            <dd class="col-sm-9">@Model.DriverLicenseNo</dd>
+
+            <dt class="col-sm-3">Role</dt>
+            <dd class="col-sm-9">@Model.Role</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-area="Admin" asp-controller="User" asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
