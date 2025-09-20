@@ -16,20 +16,21 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
-                return RedirectToAction("Login", "Account");
-
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Login", "Account", new { area = "" });
 
-            var myBookings = await _context.Bookings
+            var bookings = await _context.Bookings
                 .Include(b => b.Car)
                 .Where(b => b.UserID == customerId.Value)
                 .OrderByDescending(b => b.PickupDate)
                 .ToListAsync();
 
-            return View(myBookings);
+            ViewBag.TotalBookings = bookings.Count;
+            ViewBag.UpcomingBookings = bookings.Count(b => b.PickupDate >= DateTime.Today);
+            ViewBag.CompletedBookings = bookings.Count(b => b.ReturnDate < DateTime.Today);
+
+            return View(bookings); // Dashboard view will render stats + recent bookings
         }
     }
 }

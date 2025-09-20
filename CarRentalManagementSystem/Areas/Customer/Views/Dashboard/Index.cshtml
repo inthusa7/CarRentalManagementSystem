@@ -1,46 +1,30 @@
 ﻿@model IEnumerable<CarRentalManagementSystem.Models.Booking>
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
-
 @{
     Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Customer Dashboard";
 }
 
-<h2 class="mb-4">Welcome, @HttpContextAccessor.HttpContext.Session.GetString("Username")</h2>
+<h2>Customer Dashboard</h2>
 
-<!-- ================= Dashboard Buttons ================= -->
-<div class="mb-4 text-center">
-    <a class="btn btn-outline-primary btn-lg m-2"
-       asp-area="Customer" asp-controller="Booking" asp-action="AvailableCars">View Cars</a>
-
-    <a class="btn btn-outline-success btn-lg m-2"
-       asp-area="Customer" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
-</div>
-
-<!-- ================= Stats Cards ================= -->
 <div class="row mb-4 text-center">
     <div class="col-md-4">
-        <div class="card text-white bg-primary p-3 shadow-sm">
+        <div class="card p-3 bg-primary text-white shadow-sm">
             <h5>Total Bookings</h5>
-            <h3>@(ViewBag.TotalBookings ?? 0)</h3>
+            <h3>@ViewBag.TotalBookings</h3>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-success p-3 shadow-sm">
+        <div class="card p-3 bg-success text-white shadow-sm">
             <h5>Upcoming Bookings</h5>
-            <h3>@(ViewBag.UpcomingBookings ?? 0)</h3>
+            <h3>@ViewBag.UpcomingBookings</h3>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-warning p-3 shadow-sm">
+        <div class="card p-3 bg-warning text-dark shadow-sm">
             <h5>Completed Bookings</h5>
-            <h3>@(ViewBag.CompletedBookings ?? 0)</h3>
+            <h3>@ViewBag.CompletedBookings</h3>
         </div>
     </div>
 </div>
-
-<!-- ================= My Bookings Table ================= -->
-<h4>My Recent Bookings</h4>
 
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
@@ -61,22 +45,15 @@
                 <td>@booking.PickupDate.ToString("dd/MM/yyyy")</td>
                 <td>@booking.ReturnDate.ToString("dd/MM/yyyy")</td>
                 <td>@booking.TotalCost.ToString("C")</td>
+                <td>@(booking.IsPaid ? "Paid" : "Pending")</td>
                 <td>
-                    @if (booking.IsPaid)
+                    @if(!booking.IsPaid)
                     {
-                        <span class="badge bg-success">Paid</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-warning text-dark">Pending</span>
-                    }
-                </td>
-                <td>
-                    @if (!booking.IsPaid)
-                    {
-                        <a asp-area="Customer" asp-controller="Payment" asp-action="Create" asp-route-bookingId="@booking.BookingID" class="btn btn-primary btn-sm">
-                            Pay Now
-                        </a>
+                        <a asp-area="Customer" asp-controller="Payment" asp-action="Create" asp-route-bookingId="@booking.BookingID" class="btn btn-primary btn-sm">Pay Now</a>
+                        <form asp-area="Customer" asp-controller="Booking" asp-action="Cancel" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@booking.BookingID" />
+                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                        </form>
                     }
                     else
                     {
@@ -86,4 +63,4 @@
             </tr>
         }
     </tbody>
-</table
+</table>

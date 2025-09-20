@@ -5,32 +5,35 @@
     ViewData["Title"] = "Payments";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Payments</h2>
-    <a asp-area="Customer" asp-controller="Payment" asp-action="Create" class="btn btn-primary">
-        + ADD PAYMENT
-    </a>
-</div>
+<h2>My Payments</h2>
 
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
             <th>Payment ID</th>
             <th>Booking ID</th>
+            <th>Car</th>
             <th>Amount</th>
             <th>Method</th>
             <th>Date</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var payment in Model)
+        @foreach (var p in Model)
         {
             <tr>
-                <td>@payment.PaymentID</td>
-                <td>@payment.BookingID</td>
-                <td>@payment.Amount.ToString("C")</td>
-                <td>@payment.PaymentMethod</td>
-                <td>@payment.PaymentDate.ToString("dd MMM yyyy, hh:mm tt")</td>
+                <td>@p.PaymentID</td>
+                <td>@p.BookingID</td>
+                <td>@(p.Booking.Car != null ? $"{p.Booking.Car.CarName} ({p.Booking.Car.CarModel})" : "N/A")</td>
+                <td>@p.Amount.ToString("C")</td>
+                <td>@p.PaymentMethod</td>
+                <td>@p.PaymentDate.ToString("dd MMM yyyy, hh:mm tt")</td>
+                <td>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="BookingHistory" asp-route-bookingId="@p.BookingID" class="btn btn-info btn-sm">
+                        View Details
+                    </a>
+                </td>
             </tr>
         }
     </tbody>

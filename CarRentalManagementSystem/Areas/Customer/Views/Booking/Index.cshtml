@@ -45,16 +45,19 @@
                         }
                     </td>
                     <td>
+                        @* Only unpaid bookings can Pay Now or Cancel *@
                         @if (!b.IsPaid)
                         {
                             <a asp-area="Customer" asp-controller="Payment" asp-action="Create" asp-route-bookingId="@b.BookingID" class="btn btn-primary btn-sm">Pay Now</a>
-                        }
-                        else
-                        {
-                            <form asp-action="Cancel" method="post" onsubmit="return confirm('Cancel booking?');">
+
+                            <form asp-action="Cancel" method="post" style="display:inline;" onsubmit="return confirm('Cancel booking?');">
                                 <input type="hidden" name="id" value="@b.BookingID" />
                                 <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
                             </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
                         }
                     </td>
                 </tr>

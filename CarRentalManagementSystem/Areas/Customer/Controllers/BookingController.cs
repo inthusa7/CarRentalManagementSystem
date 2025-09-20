@@ -16,7 +16,23 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             _context = context;
         }
 
-        // GET: /Customer/Booking/AvailableCars
+        // ========== My Bookings ==========
+        public async Task<IActionResult> Index()
+        {
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("Login", "Account", new { area = "" });
+
+            var bookings = await _context.Bookings
+                .Include(b => b.Car)
+                .Where(b => b.UserID == customerId.Value)
+                .OrderByDescending(b => b.PickupDate)
+                .ToListAsync();
+
+            return View(bookings);
+        }
+
+        // ========== Available Cars ==========
         public async Task<IActionResult> AvailableCars()
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
@@ -30,7 +46,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             return View(cars);
         }
 
-        // GET: /Customer/Booking/Create?carId=1
+        // ========== GET Create Booking ==========
         public async Task<IActionResult> Create(int carId)
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
@@ -54,12 +70,11 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             return View(vm);
         }
 
-        // POST: /Customer/Booking/Create
+        // ========== POST Create Booking ==========
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookingCreateViewModel vm)
         {
-            // 1️⃣ Check session
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
                 return RedirectToAction("Login", "Account", new { area = "" });
@@ -67,7 +82,6 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             if (!ModelState.IsValid)
                 return View(vm);
 
-            // 2️⃣ Fetch the car
             var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarID == vm.CarID && c.IsAvailable);
             if (car == null)
             {
@@ -75,7 +89,6 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
                 return View(vm);
             }
 
-            // 3️⃣ Validate dates
             if (vm.ReturnDate.Date <= vm.PickupDate.Date)
             {
                 ModelState.AddModelError("", "Return date must be after pickup date.");
@@ -85,7 +98,6 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             int days = (vm.ReturnDate.Date - vm.PickupDate.Date).Days;
             if (days < 1) days = 1;
 
-            // 4️⃣ Create booking
             var booking = new Booking
             {
                 CarID = car.CarID,
@@ -97,35 +109,15 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             };
 
             _context.Bookings.Add(booking);
-
-            // 5️⃣ Mark car as unavailable
             car.IsAvailable = false;
             _context.Cars.Update(car);
-
-            // 6️⃣ Save to DB
             await _context.SaveChangesAsync();
 
-            // 7️⃣ Redirect to Payment page immediately
+            // Redirect to Payment page immediately
             return RedirectToAction("Create", "Payment", new { area = "Customer", bookingId = booking.BookingID });
         }
 
-        // GET: My bookings
-        public async Task<IActionResult> Index()
-        {
-            int? customerId = HttpContext.Session.GetInt32("CustomerID");
-            if (customerId == null)
-                return RedirectToAction("Login", "Account", new { area = "" });
-
-            var bookings = await _context.Bookings
-                .Include(b => b.Car)
-                .Where(b => b.UserID == customerId.Value)
-                .OrderByDescending(b => b.PickupDate)
-                .ToListAsync();
-
-            return View(bookings);
-        }
-
-        // POST: Cancel booking
+        // ========== Cancel Booking ==========
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
@@ -141,7 +133,6 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             if (booking == null) return NotFound();
 
             var car = booking.Car;
-
             _context.Bookings.Remove(booking);
 
             if (car != null)
