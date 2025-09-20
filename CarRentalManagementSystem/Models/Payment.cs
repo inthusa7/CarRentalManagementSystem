@@ -23,7 +23,6 @@ namespace CarRentalManagementSystem.Models
         [Required, MaxLength(50)]
         public string PaymentMethod { get; set; } = "Cash"; // Cash, Card, UPI, etc.
 
-       
-        public Booking Booking { get; set; }
+        public Booking? Booking { get; set; }
     }
 }

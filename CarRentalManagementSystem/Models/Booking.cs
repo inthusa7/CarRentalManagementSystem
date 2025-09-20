@@ -29,6 +29,7 @@ namespace CarRentalManagementSystem.Models
 
         public User User { get; set; }
         public Car Car { get; set; }
+        public Payment? Payment { get; set; }
 
 
 

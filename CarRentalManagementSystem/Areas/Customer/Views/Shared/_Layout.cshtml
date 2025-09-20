@@ -35,21 +35,20 @@
 
             <div class="collapse navbar-collapse" id="navbarCustomer">
                 <ul class="navbar-nav me-auto">
+                    <!----Home--->
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+                           asp-area="Customer" asp-controller="Dashboard" asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+
                     <!-- Book a Car -->
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" &&
                                             ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
                            asp-area="Customer" asp-controller="Booking" asp-action="Index">
                             Book a Car
-                        </a>
-                    </li>
-
-                    <!-- My Bookings -->
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" &&
-                                            ViewContext.RouteData.Values["action"]?.ToString() == "MyBookings" ? "active" : "")"
-                           asp-area="Customer" asp-controller="Booking" asp-action="MyBookings">
-                            My Bookings
                         </a>
                     </li>
 

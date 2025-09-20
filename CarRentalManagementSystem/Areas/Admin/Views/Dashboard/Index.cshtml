@@ -57,6 +57,7 @@
             <th>Pickup Date</th>
             <th>Return Date</th>
             <th>Total Cost</th>
+            <th>Payment Status</th>
         </tr>
     </thead>
     <tbody>
@@ -80,13 +81,24 @@
                     <td>@booking.PickupDate.ToString("dd MMM yyyy")</td>
                     <td>@booking.ReturnDate.ToString("dd MMM yyyy")</td>
                     <td>@booking.TotalCost.ToString("C")</td>
+                    <td>
+                        @if (booking.IsPaid)
+                        {
+                            <span class="badge bg-success">Paid</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                    </td>
+
                 </tr>
             }
         }
         else
         {
             <tr>
-                <td colspan="6" class="text-center">No bookings found.</td>
+                <td colspan="7" class="text-center">No bookings found.</td>
             </tr>
         }
     </tbody>

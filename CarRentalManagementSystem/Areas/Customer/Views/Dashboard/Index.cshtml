@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<CarRentalManagementSystem.Models.Booking>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
     Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Customer Dashboard</h2>
+<h2 class="mb-4">Welcome, @HttpContextAccessor.HttpContext.Session.GetString("Username")</h2>
 
 <div class="row mb-4 text-center">
     <div class="col-md-4">
