@@ -5,22 +5,28 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Car Rental System</title>
+
+    <!-- Bootstrap CSS -->
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+
     <style>
         .navbar-nav .nav-link {
             font-weight: 500; /* semi-bold */
         }
-        .navbar-nav .nav-link.active {
-            font-weight: 700; /* bold */
-            color: #fff !important;
-            background-color: #0d6efd;
-            border-radius: 5px;
-            padding: 5px 10px;
-        }
+
+            .navbar-nav .nav-link.active {
+                font-weight: 700; /* bold */
+                color: #fff !important;
+                background-color: #0d6efd;
+                border-radius: 5px;
+                padding: 5px 10px;
+            }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Panel</a>
@@ -30,15 +36,12 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarAdmin">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <!-- Home -->
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
-                           asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-                            Home
-                        </a>
+                           asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Home</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Car" ? "active" : "")"
                            asp-area="Admin" asp-controller="Car" asp-action="Index">Manage Cars</a>
@@ -55,11 +58,11 @@
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payment" ? "active" : "")"
                            asp-area="Admin" asp-controller="Payment" asp-action="Index">Payments</a>
                     </li>
-
                 </ul>
+
+                <!-- Logout -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <!-- ✅ force area="" so it finds global AccountController -->
                         <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">
                             Logout (@HttpContextAccessor.HttpContext.Session.GetString("Username"))
                         </a>
@@ -69,10 +72,14 @@
         </div>
     </nav>
 
+    <!-- Main content -->
     <div class="container mt-3">
         @RenderBody()
     </div>
 
+    <!-- Scripts -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Render optional Scripts section -->
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

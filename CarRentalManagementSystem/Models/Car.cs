@@ -14,19 +14,23 @@ namespace CarRentalManagementSystem.Models
         [Required, MaxLength(50)]
         public string CarModel { get; set; } = string.Empty;
 
-        [Required, MaxLength(200)]
-        public string ImageUrl { get; set; } = "Images/Cars/car2.jpg";
+        [MaxLength(200)]
+        public string? ImageUrl { get; set; }  // nullable
 
         public bool IsAvailable { get; set; } = true;
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal DailyRate { get; set; } = 50m;
-        public int SeatCount { get; set; } 
+
+        public int SeatCount { get; set; }
+
         public string CarColor { get; set; } = string.Empty;
 
         public string Location { get; set; } = string.Empty;
-        public String Description { get; set; }
-        = string.Empty;
+
+        // NEW: Description
+        public string Description { get; set; } = string.Empty;
+
         // Navigation
         public ICollection<Booking>? Bookings { get; set; }
     }

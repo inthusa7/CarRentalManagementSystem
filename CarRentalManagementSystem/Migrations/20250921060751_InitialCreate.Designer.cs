@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRentalManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250920112409_PendingChanges")]
-    partial class PendingChanges
+    [Migration("20250921060751_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,8 +85,11 @@ namespace CarRentalManagementSystem.Migrations
                     b.Property<decimal>("DailyRate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("Description")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -129,7 +132,8 @@ namespace CarRentalManagementSystem.Migrations
 
                     b.HasKey("PaymentID");
 
-                    b.HasIndex("BookingID");
+                    b.HasIndex("BookingID")
+                        .IsUnique();
 
                     b.ToTable("Payments");
                 });
@@ -204,12 +208,17 @@ namespace CarRentalManagementSystem.Migrations
             modelBuilder.Entity("CarRentalManagementSystem.Models.Payment", b =>
                 {
                     b.HasOne("CarRentalManagementSystem.Models.Booking", "Booking")
-                        .WithMany()
-                        .HasForeignKey("BookingID")
+                        .WithOne("Payment")
+                        .HasForeignKey("CarRentalManagementSystem.Models.Payment", "BookingID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Booking");
+                });
+
+            modelBuilder.Entity("CarRentalManagementSystem.Models.Booking", b =>
+                {
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("CarRentalManagementSystem.Models.Car", b =>

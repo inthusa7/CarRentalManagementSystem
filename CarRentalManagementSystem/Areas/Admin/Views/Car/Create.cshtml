@@ -1,42 +1,61 @@
 ﻿@model CarRentalManagementSystem.Models.Car
+@{
+    ViewData["Title"] = "Add Car";
+}
 
-<h2>Add New Car</h2>
+<h2>Add Car</h2>
 
-<form asp-action="Create" method="post">
-    <div>
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="form-group">
         <label asp-for="CarName"></label>
-        <input asp-for="CarName" class="form-control"/>
+        <input asp-for="CarName" class="form-control" />
+        <span asp-validation-for="CarName" class="text-danger"></span>
     </div>
-    <div>
+
+    <div class="form-group">
         <label asp-for="CarModel"></label>
-        <input asp-for="CarModel" class="form-control"/>
-    </div>
-    <div>
-        <label asp-for="ImageUrl"></label>
-        <input asp-for="ImageUrl" class="form-control"/>
-    </div>
-    <div class="mb-3">
-        <label asp-for="SeatCount" class="form-label"></label>
-        <input asp-for="SeatCount" type="number" class="form-control" />
+        <input asp-for="CarModel" class="form-control" />
+        <span asp-validation-for="CarModel" class="text-danger"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="CarColor" class="form-label"></label>
-        <input asp-for="CarColor" class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Location" class="form-label"></label>
-        <input asp-for="Location" class="form-control" />
-    </div>
-
-    <div>
+    <div class="form-group">
         <label asp-for="DailyRate"></label>
-        <input asp-for="DailyRate" class="form-control"/>
+        <input asp-for="DailyRate" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="DailyRate" class="text-danger"></span>
     </div>
-    <div>
-        <label asp-for="IsAvailable"></label>
-        <input asp-for="IsAvailable" type="checkbox" />
+
+    <div class="form-group">
+        <label asp-for="SeatCount"></label>
+        <input asp-for="SeatCount" class="form-control" type="number" />
+        <span asp-validation-for="SeatCount" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-success">Save</button>
+
+    <div class="form-group">
+        <label asp-for="CarColor"></label>
+        <input asp-for="CarColor" class="form-control" />
+        <span asp-validation-for="CarColor" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Location"></label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Upload Image (optional)</label>
+        <input type="file" name="ImageFile" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

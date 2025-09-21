@@ -1,21 +1,26 @@
 ﻿@model IEnumerable<CarRentalManagementSystem.Models.Car>
+@{
+    ViewData["Title"] = "Cars List";
+}
 
-<h2>Manage Cars</h2>
-<a class="btn btn-primary" href="/Admin/Car/Create">+ Add New Car</a>
-<br />
-<br />
+<h2>Cars List</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add New Car</a>
+</p>
 
 <table class="table table-bordered table-striped">
-    <thead class="table-dark">
+    <thead>
         <tr>
-            <th>Car Name</th>
-            <th>Car Model</th>
-            <th>Daily Rate</th>
-            <th>Available</th>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Model</th>
+            <th>Rate (Daily)</th>
             <th>Seats</th>
             <th>Color</th>
             <th>Location</th>
-            <th>Image</th>
+            <th>Description</th> <!-- NEW -->
+            <th>Available</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -23,21 +28,24 @@
         @foreach (var car in Model)
         {
             <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(car.ImageUrl))
+                    {
+                        <img src="~/@car.ImageUrl" width="100" />
+                    }
+                </td>
                 <td>@car.CarName</td>
                 <td>@car.CarModel</td>
                 <td>@car.DailyRate.ToString("C")</td>
-                <td>@(car.IsAvailable ? "Yes" : "No")</td>
                 <td>@car.SeatCount</td>
                 <td>@car.CarColor</td>
                 <td>@car.Location</td>
+                <td>@car.Description</td> <!-- NEW -->
+                <td>@(car.IsAvailable ? "Yes" : "No")</td>
                 <td>
-                    <img src="@car.ImageUrl" alt="Car Image" width="100" />
-                </td>
-                <td>
-                    <a class="btn btn-warning btn-sm" asp-controller="Car" asp-action="Edit" asp-route-id="@car.CarID">Edit</a>
-
-                    <form asp-controller="Car" asp-action="Delete" asp-route-id="@car.CarID" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    <a asp-action="Edit" asp-route-id="@car.CarID" class="btn btn-sm btn-success">Edit</a>
+                    <form asp-action="Delete" asp-route-id="@car.CarID" method="post" style="display:inline-block" onsubmit="return confirm('Are you sure you want to delete this car?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                     </form>
                 </td>
             </tr>
