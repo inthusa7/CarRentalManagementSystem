@@ -6,12 +6,17 @@ namespace CarRentalManagementSystem.Models
     {
         public int CarID { get; set; }
 
-        // Display only info about the car, not editable
+        // Car Details
         public string CarName { get; set; } = "";
         public string CarModel { get; set; } = "";
         public decimal DailyRate { get; set; }
         public string ImageUrl { get; set; } = "";
+        public int SeatCount { get; set; }
+        public string CarColor { get; set; } = "";
+        public string Location { get; set; } = "";
+        public string Description { get; set; } = "";
 
+        // Booking Details
         [Required(ErrorMessage = "Pickup Date is required")]
         [DataType(DataType.Date)]
         public DateTime PickupDate { get; set; }
@@ -20,7 +25,9 @@ namespace CarRentalManagementSystem.Models
         [DataType(DataType.Date)]
         public DateTime ReturnDate { get; set; }
 
-        [Required(ErrorMessage = "Customer Name is required")]
+        public decimal TotalCost { get; set; }
+
+        // Auto-filled from session
         public string CustomerName { get; set; } = "";
     }
 }

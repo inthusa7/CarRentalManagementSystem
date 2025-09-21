@@ -1,9 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model IEnumerable<CarRentalManagementSystem.Models.Car>
+﻿@model IEnumerable<CarRentalManagementSystem.Models.Car>
 
 @{
     Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
@@ -15,9 +10,10 @@
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
+            <th>Image</th>
             <th>Car</th>
             <th>Model</th>
-            <th>Rate</th>
+            <th>Daily Rate</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -25,11 +21,14 @@
         @foreach (var car in Model)
         {
             <tr>
+                <td>
+                    <img src="~/@car.ImageUrl" width="100" class="img-thumbnail" />
+                </td>
                 <td>@car.CarName</td>
                 <td>@car.CarModel</td>
                 <td>@car.DailyRate.ToString("C")</td>
                 <td>
-                    <a asp-area="Customer" asp-controller="Booking" asp-action="Create" asp-route-carId="@car.CarID"
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="BookNow" asp-route-carId="@car.CarID"
                        class="btn btn-success">Book Now</a>
                 </td>
             </tr>

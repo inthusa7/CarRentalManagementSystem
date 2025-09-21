@@ -2,43 +2,92 @@
 
 @{
     Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Book Now";
+    ViewData["Title"] = "Book Car";
 }
 
 <h2>Book @Model.CarName (@Model.CarModel)</h2>
 
 <div class="row">
+    <!-- Car Details Section -->
     <div class="col-md-6">
-        <img src="@Model.ImageUrl" alt="@Model.CarName" class="img-fluid rounded shadow mb-3" />
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="~/@Model.ImageUrl" alt="@Model.CarName" class="img-fluid rounded shadow mb-3" />
+        }
+        <p><strong>Model:</strong> @Model.CarModel</p>
+        <p><strong>Color:</strong> @Model.CarColor</p>
+        <p><strong>Seats:</strong> @Model.SeatCount</p>
+        <p><strong>Location:</strong> @Model.Location</p>
+        <p><strong>Description:</strong> @Model.Description</p>
         <p><strong>Daily Rate:</strong> @Model.DailyRate.ToString("C")</p>
     </div>
 
+    <!-- Booking Form Section -->
     <div class="col-md-6">
-        <form asp-action="Create" method="post">
+        <form asp-action="BookNow" method="post">
+            @Html.AntiForgeryToken()
+
             <input type="hidden" asp-for="CarID" />
             <input type="hidden" asp-for="CarName" />
             <input type="hidden" asp-for="CarModel" />
             <input type="hidden" asp-for="DailyRate" />
             <input type="hidden" asp-for="ImageUrl" />
+            <input type="hidden" asp-for="CustomerName" />
 
             <div class="mb-3">
                 <label asp-for="PickupDate" class="form-label"></label>
-                <input asp-for="PickupDate" class="form-control" type="date" />
+                <input asp-for="PickupDate" id="pickupDate" class="form-control" type="date" />
                 <span asp-validation-for="PickupDate" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="ReturnDate" class="form-label"></label>
-                <input asp-for="ReturnDate" class="form-control" type="date" />
+                <input asp-for="ReturnDate" id="returnDate" class="form-control" type="date" />
                 <span asp-validation-for="ReturnDate" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-success">Confirm Booking</button>
-            <a asp-action="Index" asp-controller="Car" class="btn btn-secondary">Back to Cars</a>
+            <div class="mb-3">
+                <label>Customer Name:</label>
+                <input type="text" class="form-control" value="@Model.CustomerName" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label>Total Cost:</label>
+                <input type="text" class="form-control" id="totalCost" readonly />
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" name="action" value="Confirm" class="btn btn-success w-50">Confirm Booking</button>
+                <button type="submit" name="action" value="Cancel" class="btn btn-secondary w-50">Cancel</button>
+            </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const dailyRate = @Model.DailyRate;
+        const pickupInput = document.getElementById("pickupDate");
+        const returnInput = document.getElementById("returnDate");
+        const totalCostInput = document.getElementById("totalCost");
+
+        function updateTotalCost() {
+            const pickup = new Date(pickupInput.value);
+            const ret = new Date(returnInput.value);
+
+            let days = Math.floor((ret - pickup) / (1000 * 60 * 60 * 24));
+            if (isNaN(days) || days < 1) days = 1;
+
+            totalCostInput.value = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+                .format(days * dailyRate);
+        }
+
+        // Initial calculation
+        updateTotalCost();
+
+        pickupInput.addEventListener("change", updateTotalCost);
+        returnInput.addEventListener("change", updateTotalCost);
+    </script>
 }

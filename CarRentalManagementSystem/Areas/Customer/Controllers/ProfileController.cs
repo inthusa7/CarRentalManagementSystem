@@ -2,6 +2,7 @@ using CarRentalManagementSystem.Data;
 using CarRentalManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CarRentalManagementSystem.Areas.Customer.Controllers
 {
@@ -15,7 +16,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             _context = context;
         }
 
-        // GET: Profile
+        // GET: Customer/Profile
         public async Task<IActionResult> Index()
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
@@ -26,13 +27,25 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             if (user == null)
                 return NotFound();
 
-            return View(user);
+            // Map User to EditProfileViewModel
+            var model = new EditProfileViewModel
+            {
+                UserID = user.UserID,
+                Username = user.Username,
+                Email = user.Email,
+                ContactNo = user.ContactNo,
+                AltContactNo = user.AltContactNo,
+                Address = user.Address,
+                DriverLicenseNo = user.DriverLicenseNo
+            };
+
+            return View(model);
         }
 
-        // POST: Profile
+        // POST: Customer/Profile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(User model)
+        public async Task<IActionResult> Index(EditProfileViewModel model)
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null || customerId != model.UserID)
@@ -45,7 +58,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
             if (user == null)
                 return NotFound();
 
-            // Only update editable fields
+            // Update only editable fields
             user.Email = model.Email;
             user.ContactNo = model.ContactNo;
             user.AltContactNo = model.AltContactNo;
@@ -54,7 +67,7 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Profile updated successfully.";
+            TempData["SuccessMessage"] = "Profile updated successfully!";
             return RedirectToAction("Index");
         }
     }

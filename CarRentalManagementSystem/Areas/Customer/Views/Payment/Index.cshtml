@@ -16,24 +16,38 @@
             <th>Amount</th>
             <th>Method</th>
             <th>Date</th>
-            <th>Action</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var p in Model)
+        @if (Model != null && Model.Any())
+        {
+            foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.PaymentID</td>
+                    <td>@p.BookingID</td>
+                    <td>@(p.Booking.Car != null ? $"{p.Booking.Car.CarName} ({p.Booking.Car.CarModel})" : "N/A")</td>
+                    <td>@(p.Booking != null ? p.Booking.TotalCost.ToString("C") : "$0.00")</td>
+                    <td>@p.PaymentMethod</td>
+                    <td>@p.PaymentDate.ToString("dd MMM yyyy, hh:mm tt")</td>
+                    <td>
+                        @if (p.Booking != null && p.Booking.IsPaid)
+                        {
+                            <span class="badge bg-success">Paid</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@p.PaymentID</td>
-                <td>@p.BookingID</td>
-                <td>@(p.Booking.Car != null ? $"{p.Booking.Car.CarName} ({p.Booking.Car.CarModel})" : "N/A")</td>
-                <td>@p.Amount.ToString("C")</td>
-                <td>@p.PaymentMethod</td>
-                <td>@p.PaymentDate.ToString("dd MMM yyyy, hh:mm tt")</td>
-                <td>
-                    <a asp-area="Customer" asp-controller="Booking" asp-action="BookingHistory" asp-route-bookingId="@p.BookingID" class="btn btn-info btn-sm">
-                        View Details
-                    </a>
-                </td>
+                <td colspan="7" class="text-center">No payments found.</td>
             </tr>
         }
     </tbody>

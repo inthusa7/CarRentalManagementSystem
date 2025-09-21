@@ -8,7 +8,7 @@
 <h2>My Bookings</h2>
 
 <p>
-    <a asp-area="Customer" asp-controller="Booking" asp-action="AvailableCars" class="btn btn-primary">+ Create New Booking</a>
+    <a asp-area="Customer" asp-controller="Booking" asp-action="AvailableCars" class="btn btn-primary">+ Book a New Car</a>
 </p>
 
 <table class="table table-bordered table-striped">
@@ -31,8 +31,8 @@
                 <tr>
                     <td>@b.BookingID</td>
                     <td>@(b.Car != null ? $"{b.Car.CarName} ({b.Car.CarModel})" : "N/A")</td>
-                    <td>@b.PickupDate.ToString("dd MMM yyyy")</td>
-                    <td>@b.ReturnDate.ToString("dd MMM yyyy")</td>
+                    <td>@b.PickupDate.ToString("dd/MM/yyyy")</td>
+                    <td>@b.ReturnDate.ToString("dd/MM/yyyy")</td>
                     <td>@b.TotalCost.ToString("C")</td>
                     <td>
                         @if (b.IsPaid)
@@ -45,15 +45,19 @@
                         }
                     </td>
                     <td>
-                        @* Only unpaid bookings can Pay Now or Cancel *@
                         @if (!b.IsPaid)
                         {
-                            <a asp-area="Customer" asp-controller="Payment" asp-action="Create" asp-route-bookingId="@b.BookingID" class="btn btn-primary btn-sm">Pay Now</a>
-
-                            <form asp-action="Cancel" method="post" style="display:inline;" onsubmit="return confirm('Cancel booking?');">
+                            <!-- Cancel Booking -->
+                            <form asp-area="Customer" asp-controller="Booking" asp-action="Cancel" method="post" 
+                                  style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@b.BookingID" />
                                 <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
                             </form>
+
+                            <!-- Pay Now -->
+                            <a asp-area="Customer" asp-controller="Payment" asp-action="Create" 
+                               asp-route-bookingId="@b.BookingID" class="btn btn-primary btn-sm">Pay Now</a>
                         }
                         else
                         {

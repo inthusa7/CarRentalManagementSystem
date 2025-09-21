@@ -27,10 +27,12 @@ namespace CarRentalManagementSystem.Areas.Customer.Controllers
                 .ToListAsync();
 
             ViewBag.TotalBookings = bookings.Count;
-            ViewBag.UpcomingBookings = bookings.Count(b => b.PickupDate >= DateTime.Today);
-            ViewBag.CompletedBookings = bookings.Count(b => b.ReturnDate < DateTime.Today);
 
-            return View(bookings); // Dashboard view will render stats + recent bookings
+            // Only Paid bookings are considered confirmed for Upcoming / Completed stats
+            ViewBag.UpcomingBookings = bookings.Count(b => b.IsPaid && b.PickupDate >= DateTime.Today);
+            ViewBag.CompletedBookings = bookings.Count(b => b.IsPaid && b.ReturnDate < DateTime.Today);
+
+            return View(bookings);
         }
     }
 }
