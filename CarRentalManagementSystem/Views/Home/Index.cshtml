@@ -1,8 +1,11 @@
 ﻿@using System.Linq
+@using Microsoft.AspNetCore.Http
 @model IEnumerable<CarRentalManagementSystem.Models.Car>
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Home Page";
+    var isLoggedIn = HttpContextAccessor.HttpContext.Session.GetString("Username") != null;
 }
 
 <!-- Hero Section -->
@@ -13,7 +16,6 @@
             Our Car Rental Management System makes it easy and convenient for customers to book cars online anytime, anywhere.
             We provide a wide range of vehicles – from economy cars to luxury models – to suit your travel needs.
             With simple registration, secure login, and transparent booking options, our platform ensures a hassle-free rental experience.
-            Whether you are planning a short trip or a long journey, we are here to make your ride smooth, safe, and affordable.
         </p>
     </div>
 </div>
@@ -33,10 +35,28 @@
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">@car.CarName (@car.CarModel)</h5>
                             <p class="card-text flex-grow-1">
-                                @car.CarName <br />
                                 Price per day: @car.DailyRate.ToString("C")
                             </p>
-                            <a asp-area="Customer" asp-controller="Booking" asp-action="Create" asp-route-carId="@car.CarID" class="btn btn-primary mt-auto">Book Now</a>
+
+                            @if (isLoggedIn)
+                            {
+                                <a asp-area="Customer"
+                                   asp-controller="Booking"
+                                   asp-action="BookNow"
+                                   asp-route-carId="@car.CarID"
+                                   class="btn btn-primary mt-auto">
+                                    Book Now
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account"
+                                   asp-action="Login"
+                                   asp-route-returnUrl="@Url.Action("BookNow", "Booking", new { area = "Customer", carId = car.CarID })"
+                                   class="btn btn-warning mt-auto">
+                                    Login to Book
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>
@@ -50,44 +70,3 @@
         }
     </div>
 </section>
-
-<!-- Optional Footer -->
-<!-- Optional Footer -->
-<footer class="mt-5 bg-dark text-white pt-4 pb-4">
-    <div class="container">
-        <div class="row">
-            <!-- About / Address -->
-            <div class="col-md-4 mb-3">
-                <h5>RentMyRide</h5>
-                <p>
-                    123 Main Street,<br />
-                    Colombo, Sri Lanka
-                </p>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="col-md-4 mb-3">
-                <h5>Contact Us</h5>
-                <p>Email: <a href="mailto:info@rentmyride.lk" class="text-white">info@rentmyride.lk</a></p>
-                <p>Phone: <a href="tel:+94111234567" class="text-white">+94 11 123 4567</a></p>
-            </div>
-
-            <!-- Social / Extra Info -->
-            <div class="col-md-4 mb-3">
-                <h5>Follow Us</h5>
-                <p>
-                    <a href="#" class="text-white me-2">Facebook</a> |
-                    <a href="#" class="text-white ms-2 me-2">Instagram</a> |
-                    <a href="#" class="text-white ms-2">Twitter</a>
-                </p>
-            </div>
-        </div>
-
-        <hr class="bg-light" />
-
-        <div class="text-center">
-            &copy; @DateTime.Now.Year RentMyRide. All rights reserved.
-        </div>
-    </div>
-</footer>
-
