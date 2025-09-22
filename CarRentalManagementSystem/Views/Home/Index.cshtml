@@ -53,9 +53,10 @@
                                 <a asp-controller="Account"
                                    asp-action="Login"
                                    asp-route-returnUrl="@Url.Action("BookNow", "Booking", new { area = "Customer", carId = car.CarID })"
-                                   class="btn btn-warning mt-auto">
+                                   class="btn btn-primary mt-auto">
                                     Login to Book
                                 </a>
+
                             }
                         </div>
                     </div>
@@ -70,3 +71,43 @@
         }
     </div>
 </section>
+<!-- Optional Footer -->
+<footer class="mt-5 bg-dark text-white pt-4 pb-4">
+    <div class="container">
+        <div class="row">
+            <!-- About / Address -->
+            <div class="col-md-4 mb-3">
+                <h5>RentMyRide</h5>
+                <p>
+                    123 Main Street,<br />
+                    Colombo, Sri Lanka
+                </p>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-md-4 mb-3">
+                <h5>Contact Us</h5>
+                <p>Email: <a href="mailto:info@rentmyride.lk" class="text-white">info@rentmyride.lk</a></p>
+                <p>Phone: <a href="tel:+94111234567" class="text-white">+94 11 123 4567</a></p>
+            </div>
+
+            <!-- Social / Extra Info -->
+            <div class="col-md-4 mb-3">
+                <h5>Follow Us</h5>
+                <p>
+                    <a href="#" class="text-white me-2">Facebook</a> |
+                    <a href="#" class="text-white ms-2 me-2">Instagram</a> |
+                    <a href="#" class="text-white ms-2">Twitter</a>
+                </p>
+            </div>
+        </div>
+
+        <hr class="bg-light" />
+
+        <div class="text-center">
+            &copy; @DateTime.Now.Year RentMyRide. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+
